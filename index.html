@@ -314,7 +314,7 @@
             try {
                 const userId = userIds[currentUser];
                 const response = await fetch(
-                    `https://api.twitter.com/2/users/${userId}/tweets?tweet.fields=created_at,public_metrics&max_results=5`,
+                    `https://api.twitter.com/2/users/${userId}/tweets?tweet.fields=created_at,public_metrics&max_results=10`,
                     { headers: { 'Authorization': `Bearer ${TWITTER_TOKEN}` } }
                 );
                 
