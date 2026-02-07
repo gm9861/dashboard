@@ -85,6 +85,16 @@
                     </div>
                 </div>
                 <div class="card">
+                    <h3 class="section-title">🎯 AHR999 估值</h3>
+                    <div style="text-align: center; padding: 15px 0;">
+                        <div id="ahr999-value" style="font-size: 3.5rem; font-weight: bold; color: #667eea;">---</div>
+                        <div id="ahr999-zone" style="padding: 10px 25px; border-radius: 25px; display: inline-block; margin: 10px 0; font-weight: bold;">加载中...</div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 15px; padding: 0 10px;">
+                            <span>0.45 买入</span><span>1.2 持有</span><span>2.0 卖出</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
                     <h3 class="section-title">💹 交易所资金流向</h3>
                     <div id="exchange-flow">
                         <div class="loading">加载中...</div>
@@ -281,15 +291,8 @@
                     </div>
                 `;
                 
-                // 巨鲸摘要（模拟）
-                const whaleAction = Math.random() > 0.5 ? 'accumulate' : 'distribute';
-                document.getElementById('whale-summary').innerHTML = `
-                    <div class="whale-item">
-                        <span class="whale-direction ${whaleAction}">${whaleAction === 'accumulate' ? '🐋 吸筹中' : '🐳 派发中'}</span>
-                        <span>${whaleAction === 'accumulate' ? '大户持续买入' : '大户开始出货'}</span>
-                    </div>
-                    <div class="metric-row"><span class="metric-label">大额转账</span><span class="metric-value">${Math.floor(Math.random() * 50 + 10)} 笔</span></div>
-                `;
+                // 计算AHR999
+                await calculateAHR999();
                 
             } catch (e) {
                 document.getElementById('btc-metrics').innerHTML = '<div class="loading">加载失败</div>';
