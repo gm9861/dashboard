@@ -80,6 +80,20 @@
         .change.up { color: #00c853; }
         .change.down { color: #ff1744; }
         
+        /* 数据源标签 */
+        .source-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: 10px;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
+        }
+        .source-tag.binance { background: rgba(243, 186, 47, 0.3); color: #f3ba2f; }
+        .source-tag.coingecko { background: rgba(101, 191, 94, 0.3); color: #65bf5e; }
+        .source-tag.bybit { background: rgba(50, 102, 255, 0.3); color: #3266ff; }
+        
         /* Twitter 区域 */
         .twitter-section {
             background: rgba(255, 255, 255, 0.05);
@@ -282,7 +296,7 @@
         </div>
         
         <p class="footer">
-            价格来源: Binance API | Twitter 来源: X API<br>
+            价格来源: Binance (主) → CoinGecko/Bybit (备) | Twitter: X API<br>
             价格每 10 分钟刷新 | Twitter 每 1 小时刷新
         </p>
         <button class="refresh-btn" onclick="refreshCurrentUser()">🔄 刷新当前用户</button>
@@ -292,49 +306,139 @@
         // 配置
         const TWITTER_TOKEN = 'AAAAAAAAAAAAAAAAAAAAJNByQEAAAAAGIzt%2F4LY4xfXuviQonNKpWQnYgw%3DSHL7zpvBRvvn04KKUYoNIGcbt2STGnv9iNl7b8nMkX7QjLGn1e';
         const BINANCE_API = 'https://api.binance.com/api/v3';
+        const BYBIT_API = 'https://api.bybit.com/v5/market';
+        const COINGECKO_API = 'https://api.coingecko.com/api/v3';
         const USD_TO_CNY = 7.3;
         
         let currentTwitterUser = null;
+        let btcPrice = null;
+        let ethPrice = null;
+        let btcSource = null;
+        let ethSource = null;
         
-        // 预设用户信息缓存
-        const userCache = {};
+        // ==================== 价格功能 (带备用) ====================
+        async function fetchBinancePrice(symbol) {
+            try {
+                const res = await fetch(`${BINANCE_API}/ticker/24hr?symbol=${symbol}`);
+                if (!res.ok) throw new Error('Binance failed');
+                const data = await res.json();
+                return {
+                    price: parseFloat(data.lastPrice),
+                    change: parseFloat(data.priceChangePercent),
+                    source: 'binance'
+                };
+            } catch (e) {
+                return null;
+            }
+        }
         
-        // ==================== 价格功能 ====================
+        async function fetchBybitPrice(symbol) {
+            try {
+                const res = await fetch(`${BYBIT_API}/tickers?category=linear&symbol=${symbol}`);
+                if (!res.ok) throw new Error('Bybit failed');
+                const data = await res.json();
+                if (data.result.list && data.result.list[0]) {
+                    const ticker = data.result.list[0];
+                    return {
+                        price: parseFloat(ticker.lastPrice),
+                        change: parseFloat(ticker.price24h) >= 0 ? 
+                            ((parseFloat(ticker.lastPrice) - parseFloat(ticker.price24h)) / parseFloat(ticker.price24h) * 100) :
+                            ((parseFloat(ticker.lastPrice) - parseFloat(ticker.price24h)) / parseFloat(ticker.price24h) * 100),
+                        source: 'bybit'
+                    };
+                }
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+        
+        async function fetchCoinGeckoPrice(coinId) {
+            try {
+                const res = await fetch(`${COINGECKO_API}/simple/price?ids=${coinId}&vs_currencies=usd&include_24hr_change=true`);
+                if (!res.ok) throw new Error('CoinGecko failed');
+                const data = await res.json();
+                if (data[coinId]) {
+                    return {
+                        price: data[coinId].usd,
+                        change: data[coinId].usd_24h_change,
+                        source: 'coingecko'
+                    };
+                }
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+        
         async function fetchPrices() {
             const container = document.getElementById('prices');
+            container.innerHTML = '<div class="loading">加载价格中...</div>';
+            
             try {
-                const [btc, eth] = await Promise.all([
-                    fetch(`${BINANCE_API}/ticker/24hr?symbol=BTCUSDT`).then(r => r.json()),
-                    fetch(`${BINANCE_API}/ticker/24hr?symbol=ETHUSDT`).then(r => r.json())
-                ]);
+                // 优先 Binance
+                let btc = await fetchBinancePrice('BTCUSDT');
+                let eth = await fetchBinancePrice('ETHUSDT');
                 
-                const btcUSD = parseFloat(btc.lastPrice);
-                const ethUSD = parseFloat(eth.lastPrice);
-                const btcChange = parseFloat(btc.priceChangePercent);
-                const ethChange = parseFloat(eth.priceChangePercent);
+                btcSource = 'binance';
+                ethSource = 'binance';
+                
+                // Binance 失败则用 Bybit
+                if (!btc) {
+                    btc = await fetchBybitPrice('BTCUSDT');
+                    btcSource = 'bybit';
+                }
+                if (!eth) {
+                    eth = await fetchBybitPrice('ETHUSDT');
+                    ethSource = 'bybit';
+                }
+                
+                // Bybit 也失败则用 CoinGecko
+                if (!btc) {
+                    btc = await fetchCoinGeckoPrice('bitcoin');
+                    btcSource = 'coingecko';
+                }
+                if (!eth) {
+                    eth = await fetchCoinGeckoPrice('ethereum');
+                    ethSource = 'coingecko';
+                }
+                
+                // 如果都没有价格
+                if (!btc || !eth) {
+                    throw new Error('所有 API 都无法获取价格');
+                }
+                
+                // 保存价格
+                btcPrice = btc.price;
+                ethPrice = eth.price;
+                
+                const btcUSD = btc.price;
+                const ethUSD = eth.price;
+                const btcCNY = btcUSD * USD_TO_CNY;
+                const ethCNY = ethUSD * USD_TO_CNY;
                 
                 container.innerHTML = `
                     <div class="card card-btc">
                         <div class="coin-name">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png" alt="BTC">
-                            <h2>Bitcoin (BTC)</h2>
+                            <h2>Bitcoin (BTC) <span class="source-tag ${btcSource}">${btcSource.toUpperCase()}</span></h2>
                         </div>
-                        <div class="price">¥${(btcUSD * USD_TO_CNY).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="price">¥${btcCNY.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                         <div class="price-usd">$${btcUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                        <div class="change ${btcChange >= 0 ? 'up' : 'down'}">${btcChange >= 0 ? '📈' : '📉'} ${btcChange >= 0 ? '+' : ''}${btcChange.toFixed(2)}% (24h)</div>
+                        <div class="change ${btc.change >= 0 ? 'up' : 'down'}">${btc.change >= 0 ? '📈' : '📉'} ${btc.change >= 0 ? '+' : ''}${btc.change.toFixed(2)}% (24h)</div>
                     </div>
                     <div class="card card-eth">
                         <div class="coin-name">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/1200px-Ethereum_logo_2014.svg.png" alt="ETH">
-                            <h2>Ethereum (ETH)</h2>
+                            <h2>Ethereum (ETH) <span class="source-tag ${ethSource}">${ethSource.toUpperCase()}</span></h2>
                         </div>
-                        <div class="price">¥${(ethUSD * USD_TO_CNY).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="price">¥${ethCNY.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                         <div class="price-usd">$${ethUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                        <div class="change ${ethChange >= 0 ? 'up' : 'down'}">${ethChange >= 0 ? '📈' : '📉'} ${ethChange >= 0 ? '+' : ''}${ethChange.toFixed(2)}% (24h)</div>
+                        <div class="change ${eth.change >= 0 ? 'up' : 'down'}">${eth.change >= 0 ? '📈' : '📉'} ${eth.change >= 0 ? '+' : ''}${eth.change.toFixed(2)}% (24h)</div>
                     </div>
                 `;
             } catch (error) {
-                container.innerHTML = '<div class="error">❌ 价格加载失败</div>';
+                container.innerHTML = `<div class="error">❌ 价格加载失败: ${error.message}</div>`;
             }
         }
         
@@ -358,7 +462,6 @@
             container.innerHTML = '<div class="loading">加载中...</div>';
             
             try {
-                // 1. 获取用户 ID
                 const userRes = await fetch(
                     `https://api.twitter.com/2/users/by?usernames=${username}`,
                     { headers: { 'Authorization': `Bearer ${TWITTER_TOKEN}` } }
@@ -374,9 +477,7 @@
                 }
                 
                 const user = userData.data;
-                userCache[username.toLowerCase()] = user;
                 
-                // 2. 获取推文
                 const tweetRes = await fetch(
                     `https://api.twitter.com/2/users/${user.id}/tweets?tweet.fields=created_at,public_metrics&max_results=10`,
                     { headers: { 'Authorization': `Bearer ${TWITTER_TOKEN}` } }
@@ -388,7 +489,6 @@
                 
                 const tweetData = await tweetRes.json();
                 
-                // 更新显示
                 document.getElementById('currentUser').innerHTML = `
                     <div class="user-info" style="display: flex; align-items: center; gap: 10px;">
                         <img src="https://unavatar.io/twitter/${username}" style="width: 40px; height: 40px; border-radius: 50%;" onerror="this.src='https://via.placeholder.com/40'">
@@ -441,18 +541,18 @@
             if (username) {
                 fetchUserTweets(username);
             }
+            fetchPrices(); // 同时刷新价格
         }
         
         // ==================== 初始化 ====================
         function init() {
             fetchPrices();
-            // 默认加载 Elon Musk
             selectPreset('elonmusk');
         }
         
         init();
         
-        // 定时刷新价格
+        // 定时刷新
         setInterval(fetchPrices, 600000);
     </script>
 </body>
