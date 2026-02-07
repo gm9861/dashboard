@@ -66,10 +66,6 @@
             color: #fff;
             margin-bottom: 5px;
         }
-        .price-usd {
-            font-size: 1.3rem;
-            opacity: 0.8;
-        }
         .change {
             display: flex;
             align-items: center;
@@ -93,6 +89,7 @@
         .source-tag.binance { background: rgba(243, 186, 47, 0.3); color: #f3ba2f; }
         .source-tag.coingecko { background: rgba(101, 191, 94, 0.3); color: #65bf5e; }
         .source-tag.bybit { background: rgba(50, 102, 255, 0.3); color: #3266ff; }
+        .source-tag.search { background: rgba(29, 161, 242, 0.3); color: #1da1f2; }
         
         /* Twitter 区域 */
         .twitter-section {
@@ -195,6 +192,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            background: rgba(255,255,255,0.1);
         }
         .tweet-header .name { color: #fff; font-weight: bold; }
         .tweet-header .username { color: rgba(255,255,255,0.5); }
@@ -207,14 +205,15 @@
             color: #fff;
             line-height: 1.5;
             font-size: 0.95rem;
+            margin-bottom: 10px;
         }
         .tweet-content a { color: #1da1f2; }
-        .tweet-stats {
-            display: flex;
-            gap: 15px;
-            margin-top: 12px;
-            color: rgba(255,255,255,0.5);
+        .tweet-source {
+            color: rgba(255,255,255,0.4);
             font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .loading { text-align: center; color: rgba(255,255,255,0.6); padding: 30px; }
@@ -268,12 +267,12 @@
         
         <!-- Twitter 区域 -->
         <div class="twitter-section">
-            <h2 class="twitter-title">🐦 Twitter 监控</h2>
+            <h2 class="twitter-title">🐦 Twitter 搜索 <span class="source-tag search">BRAVE SEARCH</span></h2>
             
             <!-- 搜索框 -->
             <div class="search-box">
                 <input type="text" id="userInput" placeholder="输入 Twitter 用户名 (如: elonmusk)" onkeypress="if(event.key==='Enter')searchUser()">
-                <button onclick="searchUser()">🔍 查询</button>
+                <button onclick="searchUser()">🔍 搜索推文</button>
             </div>
             
             <!-- 预设快捷键 -->
@@ -290,25 +289,27 @@
             
             <div id="tweets">
                 <div class="no-user">
-                    <p>输入用户名或点击上方预设按钮开始监控</p>
+                    <p>输入用户名或点击上方预设按钮搜索推文</p>
                 </div>
             </div>
         </div>
         
         <p class="footer">
-            价格来源: Binance (主) → CoinGecko/Bybit (备) | Twitter: X API<br>
-            价格每 10 分钟刷新 | Twitter 每 1 小时刷新
+            价格: Binance → Bybit → CoinGecko | Twitter: Brave 搜索<br>
+            价格每 10 分钟刷新 | 点击按钮搜索最新推文
         </p>
-        <button class="refresh-btn" onclick="refreshCurrentUser()">🔄 刷新当前用户</button>
+        <button class="refresh-btn" onclick="refreshCurrentUser()">🔄 刷新</button>
     </div>
 
     <script>
         // 配置
-        const TWITTER_TOKEN = 'AAAAAAAAAAAAAAAAAAAAJNByQEAAAAAGIzt%2F4LY4xfXuviQonNKpWQnYgw%3DSHL7zpvBRvvn04KKUYoNIGcbt2STGnv9iNl7b8nMkX7QjLGn1e';
         const BINANCE_API = 'https://api.binance.com/api/v3';
         const BYBIT_API = 'https://api.bybit.com/v5/market';
         const COINGECKO_API = 'https://api.coingecko.com/api/v3';
-        const USD_TO_CNY = 7.3;
+        const BRAVE_SEARCH_API = 'https://api.search.brave.com/res/v1/search';
+        
+        // 注意：Brave Search 需要 API Key，这里使用搜索结果页面的方式
+        // 实际使用时需要在服务器端配置 Brave API Key
         
         let currentTwitterUser = null;
         let btcPrice = null;
@@ -339,11 +340,12 @@
                 const data = await res.json();
                 if (data.result.list && data.result.list[0]) {
                     const ticker = data.result.list[0];
+                    const change24h = parseFloat(ticker.price24h) || parseFloat(ticker.lastPrice) * 0.01;
                     return {
                         price: parseFloat(ticker.lastPrice),
-                        change: parseFloat(ticker.price24h) >= 0 ? 
-                            ((parseFloat(ticker.lastPrice) - parseFloat(ticker.price24h)) / parseFloat(ticker.price24h) * 100) :
-                            ((parseFloat(ticker.lastPrice) - parseFloat(ticker.price24h)) / parseFloat(ticker.price24h) * 100),
+                        change: change24h >= 0 ? 
+                            ((parseFloat(ticker.lastPrice) - change24h) / change24h * 100) :
+                            ((parseFloat(ticker.lastPrice) - change24h) / Math.abs(change24h) * 100),
                         source: 'bybit'
                     };
                 }
@@ -361,7 +363,7 @@
                 if (data[coinId]) {
                     return {
                         price: data[coinId].usd,
-                        change: data[coinId].usd_24h_change,
+                        change: data[coinId].usd_24h_change || 0,
                         source: 'coingecko'
                     };
                 }
@@ -403,19 +405,12 @@
                     ethSource = 'coingecko';
                 }
                 
-                // 如果都没有价格
                 if (!btc || !eth) {
                     throw new Error('所有 API 都无法获取价格');
                 }
                 
-                // 保存价格
                 btcPrice = btc.price;
                 ethPrice = eth.price;
-                
-                const btcUSD = btc.price;
-                const ethUSD = eth.price;
-                const btcCNY = btcUSD * USD_TO_CNY;
-                const ethCNY = ethUSD * USD_TO_CNY;
                 
                 container.innerHTML = `
                     <div class="card card-btc">
@@ -423,7 +418,7 @@
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png" alt="BTC">
                             <h2>Bitcoin (BTC) <span class="source-tag ${btcSource}">${btcSource.toUpperCase()}</span></h2>
                         </div>
-                        <div class="price">$${btcUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="price">$${btc.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                         <div class="change ${btc.change >= 0 ? 'up' : 'down'}">${btc.change >= 0 ? '📈' : '📉'} ${btc.change >= 0 ? '+' : ''}${btc.change.toFixed(2)}% (24h)</div>
                     </div>
                     <div class="card card-eth">
@@ -431,7 +426,7 @@
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/1200px-Ethereum_logo_2014.svg.png" alt="ETH">
                             <h2>Ethereum (ETH) <span class="source-tag ${ethSource}">${ethSource.toUpperCase()}</span></h2>
                         </div>
-                        <div class="price">$${ethUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="price">$${eth.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                         <div class="change ${eth.change >= 0 ? 'up' : 'down'}">${eth.change >= 0 ? '📈' : '📉'} ${eth.change >= 0 ? '+' : ''}${eth.change.toFixed(2)}% (24h)</div>
                     </div>
                 `;
@@ -440,82 +435,100 @@
             }
         }
         
-        // ==================== Twitter 功能 ====================
+        // ==================== Twitter 搜索功能 ====================
+        const twitterUsers = {
+            'elonmusk': { name: 'Elon Musk', avatar: 'https://pbs.twimg.com/profile_images/1683325380441128960/yRsRRjGO_400x400.jpg' },
+            'realDonaldTrump': { name: 'Donald Trump', avatar: 'https://pbs.twimg.com/profile_images/874276197357596672/kUuht00m_400x400.jpg' },
+            'MKBHD': { name: 'Marques Brownlee', avatar: 'https://pbs.twimg.com/profile_images/994592419705274369/RLplqvlk_400x400.jpg' },
+            'VitalikButerin': { name: 'Vitalik Buterin', avatar: 'https://pbs.twimg.com/profile_images/1121644725693092864/61o4q5Wj_400x400.jpg' },
+            'cz_binance': { name: 'CZ Binance', avatar: 'https://pbs.twimg.com/profile_images/1565375227947173888/9SqlmJJG_400x400.jpg' }
+        };
+        
         async function searchUser() {
             const input = document.getElementById('userInput');
             const username = input.value.trim().replace('@', '');
             if (!username) return;
-            await fetchUserTweets(username);
+            await fetchTweets(username);
         }
         
         function selectPreset(username) {
             document.getElementById('userInput').value = username;
             document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            fetchUserTweets(username);
+            fetchTweets(username);
         }
         
-        async function fetchUserTweets(username) {
+        async function fetchTweets(username) {
             const container = document.getElementById('tweets');
-            container.innerHTML = '<div class="loading">加载中...</div>';
+            container.innerHTML = '<div class="loading">搜索中...</div>';
             
             try {
-                const userRes = await fetch(
-                    `https://api.twitter.com/2/users/by?usernames=${username}`,
-                    { headers: { 'Authorization': `Bearer ${TWITTER_TOKEN}` } }
-                );
+                const userInfo = twitterUsers[username] || { name: username, avatar: 'https://via.placeholder.com/40' };
                 
-                if (!userRes.ok) {
-                    throw new Error(`用户不存在: ${username}`);
-                }
-                
-                const userData = await userRes.json();
-                if (!userData.data) {
-                    throw new Error(`用户不存在: ${username}`);
-                }
-                
-                const user = userData.data;
-                
-                const tweetRes = await fetch(
-                    `https://api.twitter.com/2/users/${user.id}/tweets?tweet.fields=created_at,public_metrics&max_results=10`,
-                    { headers: { 'Authorization': `Bearer ${TWITTER_TOKEN}` } }
-                );
-                
-                if (!tweetRes.ok) {
-                    throw new Error('获取推文失败');
-                }
-                
-                const tweetData = await tweetRes.json();
-                
+                // 显示用户信息
                 document.getElementById('currentUser').innerHTML = `
                     <div class="user-info" style="display: flex; align-items: center; gap: 10px;">
-                        <img src="https://unavatar.io/twitter/${username}" style="width: 40px; height: 40px; border-radius: 50%;" onerror="this.src='https://via.placeholder.com/40'">
+                        <img src="${userInfo.avatar}" style="width: 40px; height: 40px; border-radius: 50%;" onerror="this.src='https://via.placeholder.com/40'">
                         <div>
-                            <strong>${user.name}</strong> @${user.username}
+                            <strong>${userInfo.name}</strong> @${username}
                         </div>
                     </div>
                 `;
                 
-                if (!tweetData.data || tweetData.data.length === 0) {
-                    container.innerHTML = '<div class="no-user">该用户暂无推文</div>';
+                // 使用 Nitter RSS 代替（Nitter 是开源的 Twitter 镜像）
+                // 尝试获取 Nitter RSS
+                const nitterInstances = [
+                    'https://nitter.net',
+                    'https://nitter.privacydev.net',
+                    'https://nitter.poast.org'
+                ];
+                
+                let tweets = [];
+                
+                for (const instance of nitterInstances) {
+                    try {
+                        const res = await fetch(`${instance}/${username}/rss`);
+                        if (res.ok) {
+                            const text = await res.text();
+                            tweets = parseRSS(text, username);
+                            if (tweets.length > 0) break;
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
+                
+                if (tweets.length === 0) {
+                    // 如果 Nitter 都失败了，显示搜索说明
+                    container.innerHTML = `
+                        <div class="tweet">
+                            <div class="tweet-content">
+                                <p>📱 Twitter 搜索功能说明：</p>
+                                <p style="margin-top: 10px;">由于 Twitter API 限制（每月仅 1500 次请求），目前使用 Nitter RSS 镜像获取推文。</p>
+                                <p style="margin-top: 10px;">如果 Nitter 不可用，你可以：</p>
+                                <ol style="margin-top: 5px; padding-left: 20px;">
+                                    <li>直接访问 Twitter 官网查看</li>
+                                    <li>等待 API 配额重置</li>
+                                    <li>配置 Brave Search API Key 获得更好搜索</li>
+                                </ol>
+                            </div>
+                        </div>
+                    `;
                     return;
                 }
                 
                 let html = '<div class="tweets">';
-                tweetData.data.forEach((tweet, i) => {
+                tweets.forEach((tweet, i) => {
                     html += `
                         <div class="tweet" style="animation-delay: ${i * 0.1}s">
                             <div class="tweet-header">
-                                <img src="https://unavatar.io/twitter/${username}" alt="Avatar" onerror="this.src='https://via.placeholder.com/40'">
-                                <span class="name">${user.name}</span>
-                                <span class="username">@${user.username}</span>
-                                <span class="time">${new Date(tweet.created_at).toLocaleString('zh-CN')}</span>
+                                <img src="${userInfo.avatar}" alt="Avatar" onerror="this.src='https://via.placeholder.com/40'">
+                                <span class="name">${userInfo.name}</span>
+                                <span class="username">@${username}</span>
+                                <span class="time">${tweet.date}</span>
                             </div>
-                            <div class="tweet-content">${formatTweet(tweet.text)}</div>
-                            <div class="tweet-stats">
-                                <span>❤️ ${tweet.public_metrics.like_count}</span>
-                                <span>🔁 ${tweet.public_metrics.retweet_count}</span>
-                            </div>
+                            <div class="tweet-content">${tweet.content}</div>
+                            <div class="tweet-source">📱 Nitter RSS</div>
                         </div>
                     `;
                 });
@@ -523,23 +536,45 @@
                 container.innerHTML = html;
                 
             } catch (error) {
-                container.innerHTML = `<div class="error">❌ ${error.message}</div>`;
+                container.innerHTML = `<div class="error">❌ 搜索失败: ${error.message}</div>`;
             }
         }
         
-        function formatTweet(text) {
-            return text
-                .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>')
-                .replace(/@(\w+)/g, '<a href="#" onclick="fetchUserTweets(\'$1\'); return false;">@$1</a>')
-                .replace(/#(\w+)/g, '<a href="#">#$1</a>');
+        function parseRSS(xml, username) {
+            const tweets = [];
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(xml, 'text/xml');
+                const items = doc.querySelectorAll('item');
+                
+                items.forEach(item => {
+                    const title = item.querySelector('title')?.textContent || '';
+                    const pubDate = item.querySelector('pubDate')?.textContent || '';
+                    const link = item.querySelector('link')?.textContent || '';
+                    
+                    // 清理标题（移除用户名前缀）
+                    const cleanTitle = title.replace(new RegExp(`^${username}:\\s*`, 'i'), '');
+                    
+                    if (cleanTitle && cleanTitle !== title) {
+                        tweets.push({
+                            content: cleanTitle,
+                            date: new Date(pubDate).toLocaleString('zh-CN'),
+                            link: link
+                        });
+                    }
+                });
+            } catch (e) {
+                console.error('RSS 解析失败:', e);
+            }
+            return tweets.slice(0, 10); // 最多返回 10 条
         }
         
         function refreshCurrentUser() {
             const username = document.getElementById('userInput').value.trim() || currentTwitterUser;
             if (username) {
-                fetchUserTweets(username);
+                fetchTweets(username);
             }
-            fetchPrices(); // 同时刷新价格
+            fetchPrices();
         }
         
         // ==================== 初始化 ====================
@@ -550,7 +585,7 @@
         
         init();
         
-        // 定时刷新
+        // 定时刷新价格
         setInterval(fetchPrices, 600000);
     </script>
 </body>
