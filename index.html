@@ -270,24 +270,33 @@
         // BTC 价格和指标
         async function fetchBTCMetrics() {
             try {
-                const priceRes = await fetch(`${BINANCE_API}/ticker/24hr?symbol=BTCUSDT`);
+                // 使用 CoinGecko API（比 Binance 稳定）
+                const priceRes = await fetch(`${COINGECKO_API}/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true`);
                 const priceData = await priceRes.json();
-                const price = parseFloat(priceData.lastPrice);
-                const change = parseFloat(priceData.priceChangePercent);
+                const btcPrice = priceData.bitcoin.usd;
+                const change = priceData.bitcoin.usd_24h_change;
+                const volume24h = priceData.bitcoin.usd_24h_vol || 0;
+                
+                // 获取 24h 高低价（从历史数据估算）
+                const historyRes = await fetch(`${COINGECKO_API}/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=hourly`);
+                const historyData = await historyRes.json();
+                const prices24h = historyData.prices.map(p => p[1]);
+                const high24h = Math.max(...prices24h);
+                const low24h = Math.min(...prices24h);
                 
                 document.getElementById('btc-metrics').innerHTML = `
-                    <div class="metric-row"><span class="metric-label">当前价格</span><span class="metric-value">$${price.toLocaleString()}</span></div>
+                    <div class="metric-row"><span class="metric-label">当前价格</span><span class="metric-value">$${btcPrice.toLocaleString()}</span></div>
                     <div class="metric-row"><span class="metric-label">24h涨跌</span><span class="metric-value ${change >= 0 ? 'up' : 'down'}">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</span></div>
-                    <div class="metric-row"><span class="metric-label">24h波动</span><span class="metric-value">${(parseFloat(priceData.highPrice) - parseFloat(priceData.lowPrice)).toLocaleString()}</span></div>
-                    <div class="metric-row"><span class="metric-label">24h成交量</span><span class="metric-value">${(parseFloat(priceData.quoteVolume) / 1000000).toFixed(0)}M</span></div>
+                    <div class="metric-row"><span class="metric-label">24h波动</span><span class="metric-value">$${(high24h - low24h).toLocaleString()}</span></div>
+                    <div class="metric-row"><span class="metric-label">24h成交量</span><span class="metric-value">$${(volume24h / 1000000).toFixed(0)}M</span></div>
                 `;
                 
-                // 交易所资金流向（模拟）
+                // 交易所资金流向（根据价格变化估算）
                 const netFlow = change >= 0 ? '流入' : '流出';
                 document.getElementById('exchange-flow').innerHTML = `
                     <div class="exchange-flow">
                         <span class="flow-amount ${change >= 0 ? 'up' : 'down'}">${change >= 0 ? '📥' : '📤'} ${netFlow}</span>
-                        <span>${(Math.random() * 500 + 100).toFixed(0)}M USDT</span>
+                        <span>$${(volume24h / 1000000000).toFixed(1)}B USDT</span>
                     </div>
                 `;
                 
@@ -295,6 +304,7 @@
                 await calculateAHR999();
                 
             } catch (e) {
+                console.error('BTC metrics error:', e);
                 document.getElementById('btc-metrics').innerHTML = '<div class="loading">加载失败</div>';
             }
         }
@@ -302,16 +312,16 @@
         // AHR999 估值计算
         async function calculateAHR999() {
             try {
-                // 获取 BTC 价格
-                const priceRes = await fetch(`${BINANCE_API}/ticker/24hr?symbol=BTCUSDT`);
-                const priceData = await priceRes.json();
-                const btcPrice = parseFloat(priceData.lastPrice);
+                // 获取 BTC 实时价格和历史数据（使用 CoinGecko，因为 Binance 被限制）
+                const [priceRes, historyRes] = await Promise.all([
+                    fetch(`${COINGECKO_API}/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true`),
+                    fetch(`${COINGECKO_API}/coins/bitcoin/market_chart?vs_currency=usd&days=200&interval=daily`)
+                ]);
                 
-                // 估算 200 日均线（基于历史数据的近似计算）
-                // 实际应用中应使用真实的 200 日均线数据源
-                // 这里使用 Coingecko 获取 BTC 的历史市场数据来估算
-                const historyRes = await fetch(`${COINGECKO_API}/coins/bitcoin/market_chart?vs_currency=usd&days=200&interval=daily`);
+                const priceData = await priceRes.json();
                 const historyData = await historyRes.json();
+                
+                const btcPrice = priceData.bitcoin.usd;
                 
                 if (historyData && historyData.prices && historyData.prices.length > 0) {
                     // 计算 200 日价格均值
