@@ -423,8 +423,7 @@
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png" alt="BTC">
                             <h2>Bitcoin (BTC) <span class="source-tag ${btcSource}">${btcSource.toUpperCase()}</span></h2>
                         </div>
-                        <div class="price">¥${btcCNY.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                        <div class="price-usd">$${btcUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="price">$${btcUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                         <div class="change ${btc.change >= 0 ? 'up' : 'down'}">${btc.change >= 0 ? '📈' : '📉'} ${btc.change >= 0 ? '+' : ''}${btc.change.toFixed(2)}% (24h)</div>
                     </div>
                     <div class="card card-eth">
@@ -432,8 +431,7 @@
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/1200px-Ethereum_logo_2014.svg.png" alt="ETH">
                             <h2>Ethereum (ETH) <span class="source-tag ${ethSource}">${ethSource.toUpperCase()}</span></h2>
                         </div>
-                        <div class="price">¥${ethCNY.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                        <div class="price-usd">$${ethUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="price">$${ethUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
                         <div class="change ${eth.change >= 0 ? 'up' : 'down'}">${eth.change >= 0 ? '📈' : '📉'} ${eth.change >= 0 ? '+' : ''}${eth.change.toFixed(2)}% (24h)</div>
                     </div>
                 `;
