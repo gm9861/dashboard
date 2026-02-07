@@ -299,6 +299,63 @@
             }
         }
         
+        // AHR999 估值计算
+        async function calculateAHR999() {
+            try {
+                // 获取 BTC 价格
+                const priceRes = await fetch(`${BINANCE_API}/ticker/24hr?symbol=BTCUSDT`);
+                const priceData = await priceRes.json();
+                const btcPrice = parseFloat(priceData.lastPrice);
+                
+                // 估算 200 日均线（基于历史数据的近似计算）
+                // 实际应用中应使用真实的 200 日均线数据源
+                // 这里使用 Coingecko 获取 BTC 的历史市场数据来估算
+                const historyRes = await fetch(`${COINGECKO_API}/coins/bitcoin/market_chart?vs_currency=usd&days=200&interval=daily`);
+                const historyData = await historyRes.json();
+                
+                if (historyData && historyData.prices && historyData.prices.length > 0) {
+                    // 计算 200 日价格均值
+                    const prices200 = historyData.prices.map(p => p[1]);
+                    const ma200 = prices200.reduce((a, b) => a + b, 0) / prices200.length;
+                    
+                    // AHR999 = BTC价格 / (200日均线的 0.45 倍)
+                    const ahr999 = btcPrice / (ma200 * 0.45);
+                    
+                    // 确定区间
+                    let zone = '';
+                    let zoneStyle = '';
+                    if (ahr999 < 0.45) {
+                        zone = '📈 买入区间';
+                        zoneStyle = 'background: rgba(0, 200, 83, 0.3); color: #00c853;';
+                    } else if (ahr999 < 1.2) {
+                        zone = '📊 持有/定投';
+                        zoneStyle = 'background: rgba(255, 171, 0, 0.3); color: #ffab00;';
+                    } else if (ahr999 < 2.0) {
+                        zone = '📈 牛市';
+                        zoneStyle = 'background: rgba(102, 126, 234, 0.3); color: #667eea;';
+                    } else {
+                        zone = '⚠️ 泡沫/卖出';
+                        zoneStyle = 'background: rgba(255, 23, 68, 0.3); color: #ff1744;';
+                    }
+                    
+                    document.getElementById('ahr999-value').textContent = ahr999.toFixed(2);
+                    document.getElementById('ahr999-zone').textContent = zone;
+                    document.getElementById('ahr999-zone').style = zoneStyle;
+                } else {
+                    throw new Error('无法获取历史数据');
+                }
+            } catch (e) {
+                // 如果 API 失败，使用模拟数据作为后备
+                const mockValue = (Math.random() * 1.5 + 0.5).toFixed(2);
+                let zone = '📊 持有/定投';
+                let zoneStyle = 'background: rgba(255, 171, 0, 0.3); color: #ffab00;';
+                
+                document.getElementById('ahr999-value').textContent = mockValue;
+                document.getElementById('ahr999-zone').textContent = zone + ' (模拟)';
+                document.getElementById('ahr999-zone').style = zoneStyle;
+            }
+        }
+        
         // 链上数据
         async function fetchOnChain() {
             try {
