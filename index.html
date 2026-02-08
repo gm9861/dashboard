@@ -457,39 +457,45 @@
             `;
         }
         
-        // 获取加密货币新闻
+        // 获取加密货币新闻（从静态文件）
         async function fetchCryptoNews() {
             try {
-                // 使用 CryptoCompare API 获取新闻
-                const res = await fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=EN');
+                const res = await fetch('news.json');
                 const data = await res.json();
                 
-                if (data.Data && data.Data.length > 0) {
-                    // 显示最新 5 条新闻
-                    const newsHTML = data.Data.slice(0, 5).map(item => `
+                if (data.news && data.news.length > 0) {
+                    // 显示新闻列表
+                    const newsHTML = data.news.map(item => `
                         <div class="news-item" style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
                             <a href="${item.url}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 500;">
                                 ${item.title}
                             </a>
                             <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 5px;">
-                                ${item.source_info.name} · ${new Date(item.published_on * 1000).toLocaleDateString()}
+                                ${item.source} · ${item.published_on}
                             </p>
                         </div>
                     `).join('');
                     
                     document.getElementById('crypto-news').innerHTML = newsHTML;
                     
-                    // 热门话题（模拟）
-                    const trendingTopics = ['BTC', 'ETH', 'SOL', 'DeFi', 'Meme', 'AI', 'RWA', 'ETF'];
+                    // 更新刷新时间
+                    document.getElementById('news-update-time').textContent = '更新时间: ' + data.updated;
+                    
+                    // 热门话题
+                    const allTags = data.news.flatMap(n => (n.categories || '').split('|').filter(t => t));
+                    const tagCounts = {};
+                    allTags.forEach(tag => { tagCounts[tag] = (tagCounts[tag] || 0) + 1; });
+                    const sortedTags = Object.entries(tagCounts).sort((a,b) => b[1] - a[1]).slice(0, 8);
+                    
                     document.getElementById('trending-topics').innerHTML = `
                         <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                            ${trendingTopics.map(topic => `
+                            ${sortedTags.map(([tag, count]) => `
                                 <span class="keyword" style="padding: 8px 16px; background: rgba(102,126,234,0.3); border-radius: 20px; cursor: pointer;">
-                                    #${topic}
+                                    #${tag}
                                 </span>
                             `).join('')}
                         </div>
-                        <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 15px;">
+                        <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 15px;" id="news-update-time">
                             点击话题查看相关新闻
                         </p>
                     `;
@@ -497,8 +503,8 @@
                     throw new Error('No news data');
                 }
             } catch (e) {
+                console.error('News error:', e);
                 document.getElementById('crypto-news').innerHTML = '<div class="loading">加载失败</div>';
-                document.getElementById('trending-topics').innerHTML = '<div class="loading">加载失败</div>';
             }
         }
         
