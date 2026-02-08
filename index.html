@@ -70,6 +70,7 @@
             <button class="tab-btn" onclick="showTab('onchain')">⛓️ 链上数据</button>
             <button class="tab-btn" onclick="showTab('whales')">🐋 巨鲸</button>
             <button class="tab-btn" onclick="showTab('twitter')">🐦 Twitter</button>
+            <button class="tab-btn" onclick="showTab('news')">📰 新闻</button>
             <button class="tab-btn" onclick="showTab('positions')">💼 持仓</button>
         </div>
         
@@ -182,6 +183,24 @@
                 <div class="card">
                     <h3 class="section-title">📊 巨鲸交易统计</h3>
                     <div id="whale-stats">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 新闻 -->
+        <div id="news" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <h3 class="section-title">📰 最新新闻</h3>
+                    <div id="crypto-news">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="section-title">🔥 热门话题</h3>
+                    <div id="trending-topics">
                         <div class="loading">加载中...</div>
                     </div>
                 </div>
@@ -438,6 +457,51 @@
             `;
         }
         
+        // 获取加密货币新闻
+        async function fetchCryptoNews() {
+            try {
+                // 使用 CryptoCompare API 获取新闻
+                const res = await fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=ZH');
+                const data = await res.json();
+                
+                if (data.Data && data.Data.length > 0) {
+                    // 显示最新 5 条新闻
+                    const newsHTML = data.Data.slice(0, 5).map(item => `
+                        <div class="news-item" style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <a href="${item.url}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 500;">
+                                ${item.title}
+                            </a>
+                            <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 5px;">
+                                ${item.source_info.name} · ${new Date(item.published_on * 1000).toLocaleDateString()}
+                            </p>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('crypto-news').innerHTML = newsHTML;
+                    
+                    // 热门话题（模拟）
+                    const trendingTopics = ['BTC', 'ETH', 'SOL', 'DeFi', 'Meme', 'AI', 'RWA', 'ETF'];
+                    document.getElementById('trending-topics').innerHTML = `
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            ${trendingTopics.map(topic => `
+                                <span class="keyword" style="padding: 8px 16px; background: rgba(102,126,234,0.3); border-radius: 20px; cursor: pointer;">
+                                    #${topic}
+                                </span>
+                            `).join('')}
+                        </div>
+                        <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 15px;">
+                            点击话题查看相关新闻
+                        </p>
+                    `;
+                } else {
+                    throw new Error('No news data');
+                }
+            } catch (e) {
+                document.getElementById('crypto-news').innerHTML = '<div class="loading">加载失败</div>';
+                document.getElementById('trending-topics').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
+        
         // Twitter
         function searchPreset(user) {
             document.getElementById('twitter-user').value = user;
@@ -486,12 +550,14 @@
         fetchOnChain();
         fetchSocialSentiment();
         fetchWhaleData();
+        fetchCryptoNews();
         renderPositions();
         
         // 定时刷新
         setInterval(() => {
             fetchFearGreed();
             fetchBTCMetrics();
+            fetchCryptoNews();
         }, 60000);
     </script>
 </body>
