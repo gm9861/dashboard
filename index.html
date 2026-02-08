@@ -140,6 +140,29 @@
             </div>
         </div>
         
+        <!-- 情绪热力图 Demo -->
+        <div class="card" style="grid-column: span 2;">
+            <h3 class="section-title">🌡️ 情绪热力图</h3>
+            <div id="sentiment-heatmap" style="padding: 20px; text-align: center;">
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px;" id="heatmap-container">
+                    <span class="keyword" style="font-size: 0.9rem; padding: 8px 15px; background: rgba(102,126,234,0.3); border-radius: 20px;">加载中...</span>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #ff1744;">😰 恐惧</span>
+                        <div style="flex: 1; height: 8px; background: linear-gradient(to right, #ff1744, #ffab00, #00c853); border-radius: 4px; margin: 0 15px;"></div>
+                        <span style="color: #00c853;">贪婪 📈</span>
+                    </div>
+                    <div id="sentiment-meter" style="text-align: center; margin-top: 10px; font-size: 1.5rem; font-weight: bold;">加载中...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 情绪趋势图 Demo -->
+        <div class="card" style="grid-column: span 2;">
+            <h3 class="section-title">📈 情绪趋势 (7天)</h3>
+            <div id="sentiment-chart" style="height: 200px; display: flex; align-items: end; gap: 8px; justify-content: center; padding: 20px;"></div>
+        </div>
         <!-- 链上数据 -->
         <div id="onchain" class="tab-content">
             <div class="grid">
@@ -510,6 +533,79 @@
             `).join('');
         }
         
+        // ========== 情绪热力图 ==========
+        async function fetchSentimentHeatmap() {
+            try {
+                // 模拟数据 - 实际可以从API获取
+                const keywords = [
+                    { word: '突破', sentiment: 1, weight: 85 },
+                    { word: '买入', sentiment: 1, weight: 78 },
+                    { word: '牛市', sentiment: 1, weight: 72 },
+                    { word: '回调', sentiment: -0.5, weight: 65 },
+                    { word: '震荡', sentiment: 0, weight: 60 },
+                    { word: '支撑', sentiment: 0.5, weight: 55 },
+                    { word: '阻力', sentiment: -0.3, weight: 50 },
+                    { word: '暴跌', sentiment: -1, weight: 45 },
+                    { word: '抄底', sentiment: 1, weight: 42 },
+                    { word: '套牢', sentiment: -0.8, weight: 38 },
+                    { word: '止损', sentiment: -0.5, weight: 35 },
+                    { word: '止盈', sentiment: 0.8, weight: 32 },
+                    { word: '杠杆', sentiment: 0, weight: 30 },
+                    { word: '合约', sentiment: -0.2, weight: 28 },
+                    { word: '现货', sentiment: 0.5, weight: 25 },
+                ];
+                
+                // 渲染关键词热力图
+                const container = document.getElementById('heatmap-container');
+                container.innerHTML = keywords.map(k => {
+                    const color = k.sentiment > 0 ? 'rgba(0,200,83,' : k.sentiment < 0 ? 'rgba(255,23,68,' : 'rgba(255,171,0,';
+                    const opacity = 0.2 + (k.weight / 100) * 0.6;
+                    const size = 0.8 + (k.weight / 100) * 0.6;
+                    return `<span class="keyword" style="font-size: ${size}rem; padding: 8px 16px; background: ${color}${opacity}); border-radius: 20px; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${k.word}</span>`;
+                }).join('');
+                
+                // 计算整体情绪
+                const avgSentiment = keywords.reduce((a, b) => a + b.sentiment * b.weight, 0) / keywords.reduce((a, b) => a + b.weight, 0);
+                const normalizedScore = (avgSentiment + 1) / 2 * 100;
+                
+                // 更新情绪仪表
+                const meter = document.getElementById('sentiment-meter');
+                let sentimentText, sentimentEmoji;
+                if (normalizedScore > 70) {
+                    sentimentText = '贪婪 📈';
+                    sentimentEmoji = '😄';
+                    meter.style.color = '#00c853';
+                } else if (normalizedScore > 40) {
+                    sentimentText = '中性 ➡️';
+                    sentimentEmoji = '😐';
+                    meter.style.color = '#ffab00';
+                } else {
+                    sentimentText = '恐惧 😰';
+                    sentimentEmoji = '😨';
+                    meter.style.color = '#ff1744';
+                }
+                meter.innerHTML = `${sentimentEmoji} ${normalizedScore.toFixed(0)}% - ${sentimentText}`;
+                
+                // 渲染趋势图（7天柱状图）
+                const chartContainer = document.getElementById('sentiment-chart');
+                const trendData = [45, 52, 48, 55, 62, 58, normalizedScore]; // 过去6天+今天
+                const days = ['一', '二', '三', '四', '五', '六', '日'];
+                
+                chartContainer.innerHTML = trendData.map((value, i) => {
+                    const color = value > 60 ? '#00c853' : value > 40 ? '#ffab00' : '#ff1744';
+                    const height = value + '%';
+                    return `<div style="text-align: center;"><div style="width: 30px; height: ${height}; background: ${color}; border-radius: 4px 4px 0 0; transition: height 0.3s;"></div><div style="font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 5px;">周${days[i]}</div></div>`;
+                }).join('');
+                
+            } catch (e) {
+                console.error('Sentiment error:', e);
+                document.getElementById('heatmap-container').innerHTML = '<span class="keyword">加载失败</span>';
+            }
+        }
+        
+        // 初始化时调用
+        fetchSentimentHeatmap();
+
         // 初始化
         fetchFearGreed();
         fetchBTCMetrics();
