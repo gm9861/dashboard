@@ -313,23 +313,23 @@
             }
         }
         
-        // AHR999 估值计算 (使用 Binance API)
+        // AHR999 估值计算 (使用 CoinGecko API)
         async function calculateAHR999() {
             try {
-                // 获取 BTC 当前价格
-                const priceRes = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
-                if (!priceRes.ok) throw new Error('Price API failed');
-                const priceData = await priceRes.json();
-                const btcPrice = parseFloat(priceData.price);
+                // 获取 BTC 当前价格和200天历史数据
+                const [priceRes, historyRes] = await Promise.all([
+                    fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'),
+                    fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=200&interval=daily')
+                ]);
                 
-                // 获取 200 日历史 K 线
-                const historyRes = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=200');
-                if (!historyRes.ok) throw new Error('History API failed');
+                const priceData = await priceRes.json();
                 const historyData = await historyRes.json();
                 
-                // 计算 200 日均价 (收盘价在索引 4)
-                const prices200 = historyData.map(k => parseFloat(k[4]));
-                const ma200 = prices200.reduce((a, b) => a + b, 0) / prices200.length;
+                const btcPrice = priceData.bitcoin.usd;
+                
+                // 计算200日均线
+                const prices = historyData.prices.map(p => p[1]);
+                const ma200 = prices.reduce((a, b) => a + b, 0) / prices.length;
                 
                 // AHR999 = BTC价格 / (200日均线的 0.45 倍)
                 const ahr999 = btcPrice / (ma200 * 0.45);
