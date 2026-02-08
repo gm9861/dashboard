@@ -70,9 +70,6 @@
             <button class="tab-btn" onclick="showTab('onchain')">⛓️ 链上数据</button>
             <button class="tab-btn" onclick="showTab('whales')">🐋 巨鲸</button>
             <button class="tab-btn" onclick="showTab('twitter')">🐦 Twitter</button>
-            <button class="tab-btn" onclick="showTab('weather')">🌤️ 天气</button>
-            <button class="tab-btn" onclick="showTab('search')">🔍 搜索</button>
-            <button class="tab-btn" onclick="showTab('fetch')">🌐 抓取</button>
             <button class="tab-btn" onclick="showTab('positions')">💼 持仓</button>
         </div>
         
@@ -212,61 +209,7 @@
         </div>
         
         <!-- 持仓 -->
-        <div id="positions" class="tab-content">        <!-- 天气 -->
-        <div id="weather" class="tab-content">
-            <div class="grid">
-                <div class="card">
-                    <h3 class="section-title">🌤️ 天气查询</h3>
-                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                        <input type="text" id="city-input" placeholder="输入城市名 (如: Beijing, Shanghai)" 
-                               style="flex: 1; padding: 12px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; background: rgba(255,255,255,0.1); color: #fff;">
-                        <button onclick="fetchWeather()" 
-                                style="padding: 12px 25px; background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 25px; color: white; cursor: pointer;">查询</button>
-                    </div>
-                    <div id="weather-result">
-                        <div class="loading">输入城市名查询天气</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 搜索 -->
-        <div id="search" class="tab-content">
-            <div class="grid">
-                <div class="card">
-                    <h3 class="section-title">🔍 网页搜索</h3>
-                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                        <input type="text" id="search-input" placeholder="输入搜索关键词" 
-                               style="flex: 1; padding: 12px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; background: rgba(255,255,255,0.1); color: #fff;"
-                               onkeypress="if(event.key==='Enter')performSearch()">
-                        <button onclick="performSearch()" 
-                                style="padding: 12px 25px; background: linear-gradient(135deg, #11998e, #38ef7d); border: none; border-radius: 25px; color: white; cursor: pointer;">搜索</button>
-                    </div>
-                    <div id="search-results">
-                        <div class="loading">输入关键词进行搜索</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 网页抓取 -->
-        <div id="fetch" class="tab-content">
-            <div class="grid">
-                <div class="card">
-                    <h3 class="section-title">🌐 网页抓取</h3>
-                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                        <input type="text" id="url-input" placeholder="输入网址 (如: https://example.com)" 
-                               style="flex: 1; padding: 12px 20px; border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; background: rgba(255,255,255,0.1); color: #fff;"
-                               onkeypress="if(event.key==='Enter')fetchUrl()">
-                        <button onclick="fetchUrl()" 
-                                style="padding: 12px 25px; background: linear-gradient(135deg, #fc4a1a, #f7b733); border: none; border-radius: 25px; color: white; cursor: pointer;">抓取</button>
-                    </div>
-                    <div id="fetch-result" style="max-height: 500px; overflow-y: auto;">
-                        <div class="loading">输入网址抓取页面内容</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="positions" class="tab-content">
             <div class="card">
                 <h3 class="section-title">💼 持仓管理</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
