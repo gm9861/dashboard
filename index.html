@@ -309,63 +309,52 @@
             }
         }
         
-        // AHR999 估值计算
+        // AHR999 估值计算 (使用 Binance API)
         async function calculateAHR999() {
             try {
-                // 使用 JSONP 或后台代理方式获取数据
-                // CoinGecko API 在浏览器端可能有 CORS 限制
-                
-                // 首先尝试直接获取
-                const [priceRes, historyRes] = await Promise.all([
-                    fetch(`${COINGECKO_API}/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true`),
-                    fetch(`${COINGECKO_API}/coins/bitcoin/market_chart?vs_currency=usd&days=200&interval=daily`)
-                ]);
-                
-                if (!priceRes.ok || !historyRes.ok) {
-                    throw new Error('API request failed');
-                }
-                
+                // 获取 BTC 当前价格
+                const priceRes = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+                if (!priceRes.ok) throw new Error('Price API failed');
                 const priceData = await priceRes.json();
+                const btcPrice = parseFloat(priceData.price);
+                
+                // 获取 200 日历史 K 线
+                const historyRes = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=200');
+                if (!historyRes.ok) throw new Error('History API failed');
                 const historyData = await historyRes.json();
                 
-                const btcPrice = priceData.bitcoin.usd;
+                // 计算 200 日均价 (收盘价在索引 4)
+                const prices200 = historyData.map(k => parseFloat(k[4]));
+                const ma200 = prices200.reduce((a, b) => a + b, 0) / prices200.length;
                 
-                if (historyData && historyData.prices && historyData.prices.length > 0) {
-                    // 计算 200 日价格均值
-                    const prices200 = historyData.prices.map(p => p[1]);
-                    const ma200 = prices200.reduce((a, b) => a + b, 0) / prices200.length;
-                    
-                    // AHR999 = BTC价格 / (200日均线的 0.45 倍)
-                    const ahr999 = btcPrice / (ma200 * 0.45);
-                    
-                    // 确定区间
-                    let zone = '';
-                    let zoneStyle = '';
-                    if (ahr999 < 0.45) {
-                        zone = '📈 买入区间';
-                        zoneStyle = 'background: rgba(0, 200, 83, 0.3); color: #00c853;';
-                    } else if (ahr999 < 1.2) {
-                        zone = '📊 持有/定投';
-                        zoneStyle = 'background: rgba(255, 171, 0, 0.3); color: #ffab00;';
-                    } else if (ahr999 < 2.0) {
-                        zone = '📈 牛市';
-                        zoneStyle = 'background: rgba(102, 126, 234, 0.3); color: #667eea;';
-                    } else {
-                        zone = '⚠️ 泡沫/卖出';
-                        zoneStyle = 'background: rgba(255, 23, 68, 0.3); color: #ff1744;';
-                    }
-                    
-                    document.getElementById('ahr999-value').textContent = ahr999.toFixed(2);
-                    document.getElementById('ahr999-zone').textContent = zone;
-                    document.getElementById('ahr999-zone').style = zoneStyle;
+                // AHR999 = BTC价格 / (200日均线的 0.45 倍)
+                const ahr999 = btcPrice / (ma200 * 0.45);
+                
+                // 确定区间
+                let zone = '';
+                let zoneStyle = '';
+                if (ahr999 < 0.45) {
+                    zone = '📈 买入区间';
+                    zoneStyle = 'background: rgba(0, 200, 83, 0.3); color: #00c853;';
+                } else if (ahr999 < 1.2) {
+                    zone = '📊 持有/定投';
+                    zoneStyle = 'background: rgba(255, 171, 0, 0.3); color: #ffab00;';
+                } else if (ahr999 < 2.0) {
+                    zone = '📈 牛市';
+                    zoneStyle = 'background: rgba(102, 126, 234, 0.3); color: #667eea;';
                 } else {
-                    throw new Error('无法获取历史数据');
+                    zone = '⚠️ 泡沫/卖出';
+                    zoneStyle = 'background: rgba(255, 23, 68, 0.3); color: #ff1744;';
                 }
+                
+                document.getElementById('ahr999-value').textContent = ahr999.toFixed(2);
+                document.getElementById('ahr999-zone').textContent = zone;
+                document.getElementById('ahr999-zone').style = zoneStyle;
+                
             } catch (e) {
-                console.warn('AHR999 API failed, using estimated value:', e);
-                // 使用估算值作为后备
-                // 基于当前 BTC 价格和合理假设进行估算
-                const mockValue = 1.45; // 基于当前市场情况的合理估算
+                console.warn('AHR999 API failed:', e);
+                // 后备方案
+                const mockValue = 1.45;
                 let zone = '📈 牛市';
                 let zoneStyle = 'background: rgba(102, 126, 234, 0.3); color: #667eea;';
                 
