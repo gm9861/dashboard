@@ -511,20 +511,60 @@
         // Twitter
         function searchPreset(user) {
             document.getElementById('twitter-user').value = user;
-            searchTwitter();
+            fetchTweets(user);
         }
         
         function searchTwitter() {
             const user = document.getElementById('twitter-user').value;
             if (!user) return;
-            document.getElementById('twitter-results').innerHTML = `
-                <div class="sentiment-item neutral">
-                    <p style="margin-bottom: 10px;">📱 @${user}</p>
-                    <p style="color: rgba(255,255,255,0.6); margin-bottom: 15px;">点击查看推文：</p>
-                    <a href="https://nitter.net/${user}" target="_blank" style="color: #1da1f2;">🔗 nitter.net/${user}</a>
-                    <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-top: 15px;">无需登录即可查看</p>
-                </div>
-            `;
+            fetchTweets(user);
+        }
+        
+        async function fetchTweets(user) {
+            try {
+                const res = await fetch('tweets.json');
+                const data = await res.json();
+                const userData = data[user];
+                
+                if (userData && userData.tweets && userData.tweets.length > 0) {
+                    const tweetsHTML = userData.tweets.map((tweet, i) => `
+                        <div class="tweet-item" style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <p style="color: rgba(255,255,255,0.9); margin-bottom: 8px;">${i + 1}. ${tweet.content}</p>
+                            <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">
+                                ${tweet.date} · <a href="${tweet.url}" target="_blank" style="color: #1da1f2;">原文链接</a>
+                            </p>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('twitter-results').innerHTML = `
+                        <div style="margin-bottom: 15px;">
+                            <span style="font-size: 1.2rem; font-weight: bold;">@${user}</span>
+                            <span style="color: rgba(255,255,255,0.5); margin-left: 10px;">${userData.display_name || user}</span>
+                        </div>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            ${tweetsHTML}
+                        </div>
+                        <p style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 15px;">
+                            更新时间: ${data.updated}
+                        </p>
+                    `;
+                } else {
+                    throw new Error(userData?.error || 'No tweets');
+                }
+            } catch (e) {
+                document.getElementById('twitter-results').innerHTML = `
+                    <div class="sentiment-item neutral">
+                        <p style="margin-bottom: 10px;">📱 @${user}</p>
+                        <p style="color: rgba(255,255,255,0.6); margin-bottom: 15px;">无法获取推文</p>
+                        <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">
+                            ${e.message}
+                        </p>
+                        <a href="https://nitter.net/${user}" target="_blank" style="color: #1da1f2; margin-top: 10px; display: inline-block;">
+                            🔗 在 nitter.net 查看
+                        </a>
+                    </div>
+                `;
+            }
         }
         
         // 持仓

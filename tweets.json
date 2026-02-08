@@ -1,0 +1,29 @@
+{
+  "updated": "2026-02-08 18:54:00",
+  "elonmusk": {
+    "display_name": "Elon Musk",
+    "tweets": [
+      {
+        "content": "示例推文 - 由于 nitter.net 被限制，无法实时获取推文",
+        "url": "https://nitter.net/elonmusk",
+        "date": "2026-02-08"
+      }
+    ],
+    "error": "nitter.net 连接被限制"
+  },
+  "VitalikButerin": {
+    "display_name": "Vitalik.eth",
+    "tweets": [],
+    "error": null
+  },
+  "cz_binance": {
+    "display_name": "CZ Binance",
+    "tweets": [],
+    "error": null
+  },
+  "CryptoCarl": {
+    "display_name": "Crypto Carl",
+    "tweets": [],
+    "error": null
+  }
+}
