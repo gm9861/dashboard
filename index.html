@@ -683,6 +683,58 @@
         // 初始化
         fetchFearGreed();
         fetchBTCMetrics();
+        fetchCryptoPrices();
+        // ========== 实时价格 ==========
+        async function fetchCryptoPrices() {
+            try {
+                const [btcRes, ethRes] = await Promise.all([
+                    fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'),
+                    fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT')
+                ]);
+                
+                const btcData = await btcRes.json();
+                const ethData = await ethRes.json();
+                
+                const btcPrice = parseFloat(btcData.price).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                const ethPrice = parseFloat(ethData.price).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                
+                document.getElementById('crypto-prices').innerHTML = `
+                    <div style="display: grid; gap: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 2rem;">₿</span>
+                                <div>
+                                    <div style="font-weight: bold; font-size: 1.2rem;">Bitcoin</div>
+                                    <div style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">BTC/USDT</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">$${btcPrice}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 2rem;">Ξ</span>
+                                <div>
+                                    <div style="font-weight: bold; font-size: 1.2rem;">Ethereum</div>
+                                    <div style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">ETH/USDT</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">$${ethPrice}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 15px; text-align: center;">
+                        数据来源: Binance API · 自动刷新
+                    </p>
+                `;
+            } catch (e) {
+                console.error('Price error:', e);
+                document.getElementById('crypto-prices').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
+
         fetchOnChain();
         fetchSocialSentiment();
         fetchWhaleData();
@@ -692,6 +744,58 @@
         setInterval(() => {
             fetchFearGreed();
             fetchBTCMetrics();
+        fetchCryptoPrices();
+        // ========== 实时价格 ==========
+        async function fetchCryptoPrices() {
+            try {
+                const [btcRes, ethRes] = await Promise.all([
+                    fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'),
+                    fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT')
+                ]);
+                
+                const btcData = await btcRes.json();
+                const ethData = await ethRes.json();
+                
+                const btcPrice = parseFloat(btcData.price).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                const ethPrice = parseFloat(ethData.price).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                
+                document.getElementById('crypto-prices').innerHTML = `
+                    <div style="display: grid; gap: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 2rem;">₿</span>
+                                <div>
+                                    <div style="font-weight: bold; font-size: 1.2rem;">Bitcoin</div>
+                                    <div style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">BTC/USDT</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">$${btcPrice}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 2rem;">Ξ</span>
+                                <div>
+                                    <div style="font-weight: bold; font-size: 1.2rem;">Ethereum</div>
+                                    <div style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">ETH/USDT</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">$${ethPrice}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 15px; text-align: center;">
+                        数据来源: Binance API · 自动刷新
+                    </p>
+                `;
+            } catch (e) {
+                console.error('Price error:', e);
+                document.getElementById('crypto-prices').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
+
             }, 60000);
     </script>
 </body>
