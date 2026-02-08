@@ -118,51 +118,32 @@
         <!-- 舆情分析 -->
         <div id="sentiment" class="tab-content">
             <div class="grid">
-                <div class="card">
-                    <h3 class="section-title">😰 恐惧贪婪指数</h3>
-                    <div class="fear-gauge">
-                        <div class="fear-value" id="fear-value2">---</div>
-                        <div class="fear-label" id="fear-label2">加载中...</div>
+                <!-- 情绪热力图 -->
+                <div class="card" style="grid-column: span 2;">
+                    <h3 class="section-title">🌡️ 情绪热力图</h3>
+                    <div id="sentiment-heatmap" style="padding: 20px; text-align: center;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px;" id="heatmap-container">
+                            <span class="keyword" style="font-size: 0.9rem; padding: 8px 15px; background: rgba(102,126,234,0.3); border-radius: 20px;">加载中...</span>
+                        </div>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #ff1744;">😰 恐惧</span>
+                                <div style="flex: 1; height: 8px; background: linear-gradient(to right, #ff1744, #ffab00, #00c853); border-radius: 4px; margin: 0 15px;"></div>
+                                <span style="color: #00c853;">贪婪 📈</span>
+                            </div>
+                            <div id="sentiment-meter" style="text-align: center; margin-top: 10px; font-size: 1.5rem; font-weight: bold;">加载中...</div>
+                        </div>
                     </div>
                 </div>
-                <div class="card">
-                    <h3 class="section-title">💬 社交媒体情绪</h3>
-                    <div id="social-sentiment">
-                        <div class="loading">加载中...</div>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3 class="section-title">🔥 热门关键词</h3>
-                    <div class="sentiment-keyword" id="hot-keywords">
-                        <span class="keyword">加载中...</span>
-                    </div>
+                
+                <!-- 情绪趋势图 -->
+                <div class="card" style="grid-column: span 2;">
+                    <h3 class="section-title">📈 情绪趋势 (7天)</h3>
+                    <div id="sentiment-chart" style="height: 200px; display: flex; align-items: end; gap: 8px; justify-content: center; padding: 20px;"></div>
                 </div>
             </div>
         </div>
         
-        <!-- 情绪热力图 Demo -->
-        <div class="card" style="grid-column: span 2;">
-            <h3 class="section-title">🌡️ 情绪热力图</h3>
-            <div id="sentiment-heatmap" style="padding: 20px; text-align: center;">
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px;" id="heatmap-container">
-                    <span class="keyword" style="font-size: 0.9rem; padding: 8px 15px; background: rgba(102,126,234,0.3); border-radius: 20px;">加载中...</span>
-                </div>
-                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: #ff1744;">😰 恐惧</span>
-                        <div style="flex: 1; height: 8px; background: linear-gradient(to right, #ff1744, #ffab00, #00c853); border-radius: 4px; margin: 0 15px;"></div>
-                        <span style="color: #00c853;">贪婪 📈</span>
-                    </div>
-                    <div id="sentiment-meter" style="text-align: center; margin-top: 10px; font-size: 1.5rem; font-weight: bold;">加载中...</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 情绪趋势图 Demo -->
-        <div class="card" style="grid-column: span 2;">
-            <h3 class="section-title">📈 情绪趋势 (7天)</h3>
-            <div id="sentiment-chart" style="height: 200px; display: flex; align-items: end; gap: 8px; justify-content: center; padding: 20px;"></div>
-        </div>
         <!-- 链上数据 -->
         <div id="onchain" class="tab-content">
             <div class="grid">
