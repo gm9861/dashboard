@@ -67,49 +67,47 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="showTab('dashboard')">📊 仪表盘</button>
             <button class="tab-btn" onclick="showTab('sentiment')">😰 舆情</button>
-            <button class="tab-btn" onclick="showTab('onchain')">⛓️ 链上数据</button>
+            <button class="tab-btn" onclick="showTab('onchain')">⛓️ 链上</button>
             <button class="tab-btn" onclick="showTab('whales')">🐋 巨鲸</button>
             <button class="tab-btn" onclick="showTab('twitter')">🐦 Twitter</button>
             <button class="tab-btn" onclick="showTab('positions')">💼 持仓</button>
         </div>
         
         <!-- 仪表盘 -->
+        <!-- 仪表盘 - 精简版 -->
         <div id="dashboard" class="tab-content active">
             <div class="grid">
-                <div class="card">
-                    <h3 class="section-title">📊 恐惧贪婪指数</h3>
-                    <div class="fear-gauge">
-                        <div class="fear-value" id="fear-value">---</div>
-                        <div class="fear-label" id="fear-label">加载中...</div>
-                        <div class="fear-desc" id="fear-desc">市场情绪指标</div>
+                <!-- 核心指标区 -->
+                <div class="card" style="grid-column: span 2;">
+                    <h3 class="section-title">💰 BTC 价格</h3>
+                    <div style="text-align: center;">
+                        <div id="btc-price-main" style="font-size: 3rem; font-weight: bold; color: #667eea;">---</div>
+                        <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 5px;">实时价格 · Binance</p>
                     </div>
                 </div>
+                
+                <!-- AHR999 -->
                 <div class="card">
-                    <h3 class="section-title">🎯 AHR999 估值</h3>
-                    <div style="text-align: center; padding: 15px 0;">
-                        <div id="ahr999-value" style="font-size: 3.5rem; font-weight: bold; color: #667eea;">1.53</div>
-                        <div id="ahr999-zone" style="padding: 10px 25px; border-radius: 25px; display: inline-block; margin: 10px 0; font-weight: bold; background: rgba(102,126,234,0.3); color: #667eea;">📈 牛市</div>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 15px; padding: 0 10px;">
-                            <span>0.45 买入</span><span>1.2 持有</span><span>2.0 卖出</span>
-                        </div>
-                        <p style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 10px;">BTC $70,515 · 200日均 $102,380</p>
+                    <h3 class="section-title">🎯 AHR999</h3>
+                    <div style="text-align: center;">
+                        <div id="ahr999-main" style="font-size: 2.5rem; font-weight: bold; color: #667eea;">1.53</div>
+                        <div id="ahr999-zone-main" style="padding: 8px 20px; border-radius: 20px; display: inline-block; margin-top: 10px; background: rgba(102,126,234,0.3); color: #667eea;">📈 牛市</div>
                     </div>
                 </div>
+                
+                <!-- 恐惧贪婪 -->
                 <div class="card">
-                    <h3 class="section-title">💹 交易所资金流向</h3>
-                    <div id="exchange-flow">
-                        <div class="loading">加载中...</div>
+                    <h3 class="section-title">😰 恐惧贪婪</h3>
+                    <div style="text-align: center;">
+                        <div id="fng-main" style="font-size: 2.5rem; font-weight: bold;">--</div>
+                        <div id="fng-label-main" style="color: rgba(255,255,255,0.6); margin-top: 5px;">加载中...</div>
                     </div>
                 </div>
-                <div class="card">
-                    <h3 class="section-title">📈 BTC 链上指标</h3>
-                    <div id="btc-metrics">
-                        <div class="loading">加载中...</div>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3 class="section-title">🐋 巨鲸动向</h3>
-                    <div id="whale-summary">
+                
+                <!-- 交易所资金 -->
+                <div class="card" style="grid-column: span 2;">
+                    <h3 class="section-title">💹 交易所资金</h3>
+                    <div id="exchange-flow-main" style="text-align: center;">
                         <div class="loading">加载中...</div>
                     </div>
                 </div>
@@ -256,7 +254,8 @@
                     const labels = { 0: '极度恐惧', 25: '恐惧', 50: '中立', 75: '贪婪', 100: '极度贪婪' };
                     const label = Object.entries(labels).reverse().find(([k]) => value >= k)[1];
                     
-                    document.getElementById('fear-value').textContent = value;
+                    document.getElementById('fng-main').textContent = value;
+                    document.getElementById('fng-label-main').textContent = label;
                     document.getElementById('fear-value').className = `fear-value ${valueClass}`;
                     document.getElementById('fear-label').textContent = label;
                     document.getElementById('fear-value2').textContent = value;
