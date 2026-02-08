@@ -461,7 +461,7 @@
         async function fetchCryptoNews() {
             try {
                 // 使用 CryptoCompare API 获取新闻
-                const res = await fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=ZH');
+                const res = await fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=EN');
                 const data = await res.json();
                 
                 if (data.Data && data.Data.length > 0) {
