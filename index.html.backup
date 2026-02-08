@@ -70,6 +70,7 @@
             <button class="tab-btn" onclick="showTab('onchain')">⛓️ 链上数据</button>
             <button class="tab-btn" onclick="showTab('whales')">🐋 巨鲸</button>
             <button class="tab-btn" onclick="showTab('twitter')">🐦 Twitter</button>
+            <button class="tab-btn" onclick="showTab('news')">📰 新闻</button>
             <button class="tab-btn" onclick="showTab('positions')">💼 持仓</button>
         </div>
         
@@ -182,6 +183,24 @@
                 <div class="card">
                     <h3 class="section-title">📊 巨鲸交易统计</h3>
                     <div id="whale-stats">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 新闻 -->
+        <div id="news" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <h3 class="section-title">📰 最新新闻</h3>
+                    <div id="crypto-news">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="section-title">🔥 热门话题</h3>
+                    <div id="trending-topics">
                         <div class="loading">加载中...</div>
                     </div>
                 </div>
@@ -440,6 +459,55 @@
         
         // 获取加密货币新闻（从静态文件）
         async function fetchCryptoNews() {
+            try {
+                const res = await fetch('news.json');
+                const data = await res.json();
+                
+                if (data.news && data.news.length > 0) {
+                    // 显示新闻列表
+                    const newsHTML = data.news.map(item => `
+                        <div class="news-item" style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <a href="${item.url}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 500;">
+                                ${item.title}
+                            </a>
+                            <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 5px;">
+                                ${item.source} · ${item.published_on}
+                            </p>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('crypto-news').innerHTML = newsHTML;
+                    
+                    // 更新刷新时间
+                    document.getElementById('news-update-time').textContent = '更新时间: ' + data.updated;
+                    
+                    // 热门话题
+                    const allTags = data.news.flatMap(n => (n.categories || '').split('|').filter(t => t));
+                    const tagCounts = {};
+                    allTags.forEach(tag => { tagCounts[tag] = (tagCounts[tag] || 0) + 1; });
+                    const sortedTags = Object.entries(tagCounts).sort((a,b) => b[1] - a[1]).slice(0, 8);
+                    
+                    document.getElementById('trending-topics').innerHTML = `
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            ${sortedTags.map(([tag, count]) => `
+                                <span class="keyword" style="padding: 8px 16px; background: rgba(102,126,234,0.3); border-radius: 20px; cursor: pointer;">
+                                    #${tag}
+                                </span>
+                            `).join('')}
+                        </div>
+                        <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 15px;" id="news-update-time">
+                            点击话题查看相关新闻
+                        </p>
+                    `;
+                } else {
+                    throw new Error('No news data');
+                }
+            } catch (e) {
+                console.error('News error:', e);
+                document.getElementById('crypto-news').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
+        
         // Twitter
         function searchPreset(user) {
             document.getElementById('twitter-user').value = user;
@@ -528,13 +596,15 @@
         fetchOnChain();
         fetchSocialSentiment();
         fetchWhaleData();
+        fetchCryptoNews();
         renderPositions();
         
         // 定时刷新
         setInterval(() => {
             fetchFearGreed();
             fetchBTCMetrics();
-            }, 60000);
+            fetchCryptoNews();
+        }, 60000);
     </script>
 </body>
 </html>
