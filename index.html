@@ -64,6 +64,7 @@
             <button class="tab-btn" onclick="showTab('sentiment', event)">😰 舆情</button>
             <button class="tab-btn" onclick="showTab('onchain', event)">⛓️ 链上</button>
             <button class="tab-btn" onclick="showTab('positions', event)">💼 持仓</button>
+            <button class="tab-btn" onclick="showTab('news', event)">📰 新闻</button>
         </div>
         
         <!-- 仪表盘 -->
@@ -139,6 +140,18 @@
                     <h3 class="section-title">💼 我的持仓</h3>
                     <div id="positions-list">
                         <div class="loading">暂无持仓</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 新闻 -->
+        <div id="news" class="tab-content">
+            <div class="grid">
+                <div class="card" style="grid-column: span 2;">
+                    <h3 class="section-title">📰 加密货币新闻</h3>
+                    <div id="crypto-news">
+                        <div class="loading">加载中...</div>
                     </div>
                 </div>
             </div>
@@ -358,6 +371,35 @@
         }
         
         init();
+        
+        // 加密货币新闻
+        async function fetchNews() {
+            try {
+                // 使用 CoinGecko Trending 获取热门币种相关讨论
+                const res = await fetch('https://api.coingecko.com/api/v3/search/trending');
+                const data = await res.json();
+                
+                const coins = data.coins.slice(0, 6).map(c => c.item);
+                
+                document.getElementById('crypto-news').innerHTML = coins.map(coin => `
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <img src="${coin.thumb}" style="width:32px;height:32px;border-radius:50%;" />
+                            <div>
+                                <div style="font-weight:bold;">${coin.name}</div>
+                                <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);">#${coin.market_cap_rank || '--'}</div>
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:bold;">$${coin.price_btc.toFixed(8)} BTC</div>
+                            <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);">${(coin.item_score || 0).toFixed(0)} 热度</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                document.getElementById('crypto-news').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
         
         // 定时刷新
         setInterval(() => {
