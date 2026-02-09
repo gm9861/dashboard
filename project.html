@@ -11,13 +11,18 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             color: white;
-            padding: 20px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        .container { text-align: center; padding: 40px; }
+        .card {
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 60px;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .icon { font-size: 4rem; margin-bottom: 20px; }
         h1 {
             font-size: 2.5rem;
             background: linear-gradient(90deg, #667eea, #764ba2);
@@ -25,58 +30,28 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 30px;
         }
-        .link-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 40px;
-            display: inline-block;
-            transition: all 0.3s;
-            border: 2px solid rgba(255,255,255,0.1);
-        }
-        .link-card:hover {
-            transform: translateY(-5px);
-            border-color: #667eea;
-            box-shadow: 0 10px 40px rgba(102,126,234,0.3);
-        }
-        .icon { font-size: 3rem; margin-bottom: 15px; }
-        .title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
-        .desc { color: rgba(255,255,255,0.5); margin-bottom: 20px; }
         .btn {
             display: inline-block;
-            padding: 12px 30px;
+            padding: 15px 40px;
             background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 25px;
+            border-radius: 30px;
             color: white;
             text-decoration: none;
+            font-size: 1.2rem;
             font-weight: bold;
             transition: all 0.3s;
         }
         .btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102,126,234,0.5);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.5);
         }
-        .features { margin-top: 40px; display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
-        .feature { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; max-width: 200px; }
-        .feature-icon { font-size: 2rem; margin-bottom: 10px; }
-        .feature-title { font-weight: bold; margin-bottom: 5px; }
-        .feature-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎯 项目管理系统</h1>
-        <div class="link-card">
-            <div class="icon">💰</div>
-            <div class="title">加密货币仪表盘</div>
-            <div class="desc">AHR999 · 恐惧贪婪 · Top10市值 · 持仓管理</div>
-            <a href="index.html" class="btn">打开仪表盘 →</a>
-        </div>
-        <div class="features">
-            <div class="feature"><div class="feature-icon">📊</div><div class="feature-title">AHR999</div><div class="feature-desc">非小号数据实时查看</div></div>
-            <div class="feature"><div class="feature-icon">😰</div><div class="feature-title">恐惧贪婪</div><div class="feature-desc">Alternative.me 指数</div></div>
-            <div class="feature"><div class="feature-icon">📈</div><div class="feature-title">市值排行</div><div class="feature-desc">CoinGecko Top10</div></div>
-            <div class="feature"><div class="feature-icon">💼</div><div class="feature-title">持仓追踪</div><div class="feature-desc">本地存储</div></div>
-        </div>
+    <div class="card">
+        <div class="icon">💰</div>
+        <h1>加密货币仪表盘</h1>
+        <a href="index.html" class="btn">打开 →</a>
     </div>
 </body>
 </html>
