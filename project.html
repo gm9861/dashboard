@@ -24,9 +24,7 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
-        .header p {
-            color: rgba(255,255,255,0.5);
-        }
+        .header p { color: rgba(255,255,255,0.5); }
         
         .projects {
             display: grid;
@@ -49,20 +47,9 @@
             border-color: #667eea;
             box-shadow: 0 10px 40px rgba(102,126,234,0.2);
         }
-        .project-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-        .project-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        .project-desc {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
+        .project-icon { font-size: 3rem; margin-bottom: 15px; }
+        .project-name { font-size: 1.3rem; font-weight: bold; margin-bottom: 8px; }
+        .project-desc { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-bottom: 15px; }
         .project-link {
             display: inline-block;
             padding: 8px 20px;
@@ -73,10 +60,7 @@
             font-size: 0.9rem;
             transition: all 0.3s;
         }
-        .project-link:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
-        }
+        .project-link:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
         .delete-btn {
             position: absolute;
             top: 15px;
@@ -92,13 +76,8 @@
             transition: all 0.3s;
             font-size: 1.2rem;
         }
-        .project-card:hover .delete-btn {
-            opacity: 1;
-        }
-        .delete-btn:hover {
-            background: #ff1744;
-            color: white;
-        }
+        .project-card:hover .delete-btn { opacity: 1; }
+        .delete-btn:hover { background: #ff1744; color: white; }
         
         .add-card {
             background: rgba(255,255,255,0.03);
@@ -110,19 +89,9 @@
             cursor: pointer;
             min-height: 200px;
         }
-        .add-card:hover {
-            border-color: #667eea;
-            background: rgba(102,126,234,0.1);
-        }
-        .add-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            color: rgba(255,255,255,0.3);
-        }
-        .add-text {
-            color: rgba(255,255,255,0.4);
-            font-size: 1.1rem;
-        }
+        .add-card:hover { border-color: #667eea; background: rgba(102,126,234,0.1); }
+        .add-icon { font-size: 3rem; margin-bottom: 10px; color: rgba(255,255,255,0.3); }
+        .add-text { color: rgba(255,255,255,0.4); font-size: 1.1rem; }
         
         .modal {
             display: none;
@@ -145,20 +114,9 @@
             max-width: 400px;
             border: 1px solid rgba(255,255,255,0.1);
         }
-        .modal-title {
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9rem;
-        }
+        .modal-title { font-size: 1.3rem; margin-bottom: 25px; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: rgba(255,255,255,0.7); font-size: 0.9rem; }
         .form-group input {
             width: 100%;
             padding: 12px;
@@ -168,10 +126,6 @@
             color: white;
             font-size: 1rem;
         }
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
         .btn {
             width: 100%;
             padding: 12px;
@@ -180,23 +134,15 @@
             cursor: pointer;
             font-size: 1rem;
             font-weight: bold;
-            transition: all 0.3s;
             margin-bottom: 10px;
         }
         .btn-primary {
             background: linear-gradient(90deg, #667eea, #764ba2);
             color: white;
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
-        }
         .btn-secondary {
             background: rgba(255,255,255,0.1);
             color: white;
-        }
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.15);
         }
     </style>
 </head>
@@ -235,20 +181,9 @@
     <script>
         const STORAGE_KEY = 'dashboard_projects';
         let projects = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-            {
-                id: '1',
-                name: '加密货币仪表盘',
-                desc: 'AHR999 · 恐惧贪婪 · Top10市值',
-                url: 'index.html',
-                icon: '💰'
-            },
-            {
-                id: '2',
-                name: '人生管理系统',
-                desc: '2026年度目标 · 习惯养成 · 计划追踪',
-                url: 'life.html',
-                icon: '🎯'
-            }
+            { id: '1', name: '加密货币仪表盘', desc: 'AHR999 · 恐惧贪婪 · Top10市值', url: 'index.html', icon: '💰' },
+            { id: '2', name: '人生管理系统', desc: '2026年度目标 · 习惯养成 · 计划追踪', url: 'life.html', icon: '🎯' },
+            { id: '3', name: '每日总结', desc: '每日完成情况统计', url: 'daily_summary.html', icon: '📊' }
         ];
 
         function renderProjects() {
@@ -287,17 +222,8 @@
             const desc = document.getElementById('projectDesc').value;
             const url = document.getElementById('projectUrl').value;
             const icon = document.getElementById('projectIcon').value || '📁';
-
             if (!name || !url) return alert('请填写名称和链接');
-
-            projects.push({
-                id: Date.now().toString(),
-                name,
-                desc,
-                url,
-                icon
-            });
-
+            projects.push({ id: Date.now().toString(), name, desc, url, icon });
             localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
             renderProjects();
             closeModal();

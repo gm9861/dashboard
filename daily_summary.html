@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 每日总结</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 30px 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .date-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .summary-card {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .summary-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
+        }
+        
+        .todo-summary {
+            margin-top: 20px;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .todo-item.done {
+            background: rgba(0,200,83,0.1);
+        }
+        .todo-item.not-done {
+            background: rgba(255,23,68,0.1);
+        }
+        .todo-icon {
+            font-size: 1.3rem;
+            margin-right: 15px;
+        }
+        .todo-content { flex: 1; }
+        .todo-title { font-weight: 500; }
+        .todo-time { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+        .todo-status {
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        .status-done {
+            background: rgba(0,200,83,0.3);
+            color: #00c853;
+        }
+        .status-not {
+            background: rgba(255,23,68,0.3);
+            color: #ff1744;
+        }
+        
+        .habit-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .habit-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+        }
+        .habit-icon { font-size: 1.5rem; }
+        .habit-name { font-size: 0.9rem; margin: 8px 0; }
+        .habit-checked {
+            color: #00c853;
+            font-size: 0.85rem;
+        }
+        .habit-unchecked {
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+        }
+        
+        .goal-summary {
+            margin-top: 20px;
+        }
+        .goal-item {
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .goal-name { font-weight: 500; }
+        .goal-progress {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-top: 8px;
+        }
+        .goal-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+        
+        .mood-section {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .mood-question {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 15px;
+        }
+        .mood-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .mood-btn {
+            font-size: 2rem;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .mood-btn:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+        
+        .history-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .history-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .history-date { font-weight: 500; }
+        .history-rate { color: #667eea; }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .back-link:hover { color: #667eea; }
+    </style>
+</head>
+<body>
+    <a href="project.html" class="back-link">← 返回项目管理系统</a>
+    
+    <div class="header">
+        <h1>📊 每日总结</h1>
+        <div class="date-badge" id="todayDate"></div>
+    </div>
+    
+    <div class="summary-card">
+        <div class="summary-title">📈 今日完成情况</div>
+        <div class="stat-grid">
+            <div class="stat-item">
+                <div class="stat-value" id="taskRate">0%</div>
+                <div class="stat-label">任务完成率</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="habitRate">0%</div>
+                <div class="stat-label">习惯完成率</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="overallRate">0%</div>
+                <div class="stat-label">综合评分</div>
+            </div>
+        </div>
+        
+        <div class="todo-summary">
+            <div style="margin-bottom: 15px; font-weight: 500;">📋 任务完成情况</div>
+            <div id="todoList"></div>
+        </div>
+        
+        <div class="todo-summary">
+            <div style="margin: 20px 0 15px; font-weight: 500;">🔥 习惯打卡情况</div>
+            <div class="habit-summary" id="habitList"></div>
+        </div>
+        
+        <div class="mood-section">
+            <div class="mood-question">今天感觉如何？</div>
+            <div class="mood-options">
+                <button class="mood-btn" onclick="recordMood('😄')">😄</button>
+                <button class="mood-btn" onclick="recordMood('🙂')">🙂</button>
+                <button class="mood-btn" onclick="recordMood('😐')">😐</button>
+                <button class="mood-btn" onclick="recordMood('😔')">😔</button>
+                <button class="mood-btn" onclick="recordMood('😓')">😓</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="history-section">
+        <div class="summary-title">📅 历史记录</div>
+        <div id="historyList"></div>
+    </div>
+
+    <script>
+        const TODAY_KEY = 'daily_summary_' + new Date().toISOString().split('T')[0];
+        const HISTORY_KEY = 'daily_summary_history';
+        
+        // 从life.html获取今日数据
+        let todayTodos = JSON.parse(localStorage.getItem('daily_todos') || '[]');
+        let todayHabits = JSON.parse(localStorage.getItem('daily_habits') || '[]');
+        let goals = JSON.parse(localStorage.getItem('life_goals_2026') || '[]');
+        
+        // 计算统计数据
+        const taskDone = todayTodos.filter(t => t.completed).length;
+        const taskTotal = todayTodos.length;
+        const taskRate = taskTotal ? Math.round(taskDone / taskTotal * 100) : 0;
+        
+        const habitChecked = todayHabits.filter(h => h.checked).length;
+        const habitTotal = todayHabits.length;
+        const habitRate = habitTotal ? Math.round(habitChecked / habitTotal * 100) : 0;
+        
+        const overallRate = Math.round((taskRate + habitRate) / 2);
+        
+        function renderToday() {
+            document.getElementById('todayDate').textContent = new Date().toLocaleDateString('zh-CN', { 
+                month: 'long', day: 'numeric', weekday: 'long' 
+            });
+            
+            document.getElementById('taskRate').textContent = taskRate + '%';
+            document.getElementById('habitRate').textContent = habitRate + '%';
+            document.getElementById('overallRate').textContent = overallRate + '%';
+            
+            // 渲染任务
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = todayTodos.map(t => `
+                <div class="todo-item ${t.completed ? 'done' : 'not-done'}">
+                    <div class="todo-icon">${t.completed ? '✅' : '⭕'}</div>
+                    <div class="todo-content">
+                        <div class="todo-title">${t.title}</div>
+                        <div class="todo-time">${t.time}</div>
+                    </div>
+                    <span class="todo-status ${t.completed ? 'status-done' : 'status-not'}">
+                        ${t.completed ? '已完成' : '未完成'}
+                    </span>
+                </div>
+            `).join('');
+            
+            // 渲染习惯
+            const habitList = document.getElementById('habitList');
+            habitList.innerHTML = todayHabits.map(h => `
+                <div class="habit-item">
+                    <div class="habit-icon">${h.icon}</div>
+                    <div class="habit-name">${h.name}</div>
+                    <div class="${h.checked ? 'habit-checked' : 'habit-unchecked'}">
+                        ${h.checked ? '✓ 已打卡' : '○ 未打卡'}
+                    </div>
+                </div>
+            `).join('');
+            
+            // 生成总结文本
+            generateSummary();
+        }
+        
+        function generateSummary() {
+            const today = new Date().toISOString().split('T')[0];
+            const summary = {
+                date: today,
+                taskRate: taskRate,
+                habitRate: habitRate,
+                overallRate: overallRate,
+                taskDone: taskDone,
+                taskTotal: taskTotal,
+                habitChecked: habitChecked,
+                habitTotal: habitTotal,
+                todos: todayTodos,
+                habits: todayHabits
+            };
+            
+            // 保存今日总结
+            let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            history.unshift(summary);
+            history = history.slice(0, 30); // 只保留30天
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+            localStorage.setItem(TODAY_KEY, JSON.stringify(summary));
+            
+            renderHistory();
+        }
+        
+        function renderHistory() {
+            const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            const historyList = document.getElementById('historyList');
+            
+            historyList.innerHTML = history.map(h => `
+                <div class="history-card">
+                    <div class="history-header">
+                        <span class="history-date">${h.date}</span>
+                        <span class="history-rate">综合 ${h.overallRate}%</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:0.85rem;color:rgba(255,255,255,0.5);">
+                        <div>任务: ${h.taskDone}/${h.taskTotal} (${h.taskRate}%)</div>
+                        <div>习惯: ${h.habitChecked}/${h.habitTotal} (${h.habitRate}%)</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function recordMood(emoji) {
+            alert('已记录今日心情: ' + emoji);
+            localStorage.setItem('mood_' + new Date().toISOString().split('T')[0], emoji);
+        }
+        
+        renderToday();
+        renderHistory();
+    </script>
+</body>
+</html>
