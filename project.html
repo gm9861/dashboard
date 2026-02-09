@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 项目管理系统</title>
+    <title>🎯 人生管理系统 2026</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -11,304 +11,486 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             color: white;
-            padding: 40px 20px;
+            padding: 30px 20px;
         }
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             background: linear-gradient(90deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+        .year-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            padding: 8px 25px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        /* 年度目标进度 */
+        .goals-section {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .goal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .goal-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        .goal-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .goal-icon { font-size: 2rem; }
+        .goal-check {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .goal-check:hover { border-color: #667eea; }
+        .goal-check.completed {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-color: transparent;
+        }
+        .goal-check.completed::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+        .goal-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .goal-desc {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
             margin-bottom: 10px;
         }
-        .header p {
+        .goal-progress {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .goal-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.5s;
+        }
+        .goal-date {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 8px;
+        }
+        
+        /* 今日计划 */
+        .today-section {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+        .today-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .today-date {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.7);
+        }
+        .time-stats {
+            font-size: 0.85rem;
             color: rgba(255,255,255,0.5);
         }
         
-        /* 项目卡片网格 */
-        .projects {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+        .todo-list {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .todo-item:last-child { border-bottom: none; }
+        .todo-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            margin-right: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .todo-check:hover { border-color: #667eea; }
+        .todo-check.completed {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-color: transparent;
+        }
+        .todo-check.completed::after {
+            content: '✓';
+            color: white;
+            font-size: 0.8rem;
+        }
+        .todo-content { flex: 1; }
+        .todo-title { font-weight: 500; margin-bottom: 3px; }
+        .todo-time {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+        }
+        .todo-tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+        }
+        .tag-study { background: rgba(102,126,234,0.3); color: #667eea; }
+        .tag-健康 { background: rgba(0,200,83,0.3); color: #00c853; }
+        .tag-create { background: rgba(255,165,0,0.3); color: #ffa500; }
+        
+        /* 周计划 */
+        .week-section {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
-        .project-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-            position: relative;
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
         }
-        .project-card:hover {
-            transform: translateY(-5px);
-            border-color: #667eea;
-            box-shadow: 0 10px 40px rgba(102,126,234,0.2);
+        .day-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
         }
-        .project-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-        .project-name {
-            font-size: 1.3rem;
-            font-weight: bold;
+        .day-name {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
             margin-bottom: 8px;
         }
-        .project-desc {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-        .project-link {
-            display: inline-block;
-            padding: 8px 20px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-        }
-        .project-link:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
-        }
-        .delete-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(255,23,68,0.2);
-            border: none;
-            color: #ff1744;
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.3s;
+        .day-date {
             font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
-        .project-card:hover .delete-btn {
-            opacity: 1;
+        .day-tasks {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
         }
-        .delete-btn:hover {
-            background: #ff1744;
-            color: white;
-        }
-        
-        /* 添加按钮 */
-        .add-card {
-            background: rgba(255,255,255,0.03);
-            border: 2px dashed rgba(255,255,255,0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            min-height: 200px;
-        }
-        .add-card:hover {
+        .day-card.today {
             border-color: #667eea;
             background: rgba(102,126,234,0.1);
         }
-        .add-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            color: rgba(255,255,255,0.3);
-        }
-        .add-text {
-            color: rgba(255,255,255,0.4);
-            font-size: 1.1rem;
+        .day-card.today .day-date {
+            color: #667eea;
         }
         
-        /* 模态框 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+        /* 习惯打卡 */
+        .habits-section {
+            max-width: 1200px;
+            margin: 0 auto 40px;
         }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: #1a1a2e;
-            border-radius: 16px;
-            padding: 30px;
-            width: 90%;
-            max-width: 400px;
-            border: 1px solid rgba(255,255,255,0.1);
+        .habit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
         }
-        .modal-title {
-            font-size: 1.3rem;
-            margin-bottom: 25px;
+        .habit-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .habit-icon { font-size: 1.5rem; margin-bottom: 8px; }
+        .habit-name { font-size: 0.9rem; margin-bottom: 8px; }
+        .habit-streak {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+        }
+        .habit-check {
+            margin-top: 10px;
+            padding: 6px 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .habit-check.checked {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-color: transparent;
+            color: white;
+        }
+        
+        /* 进度统计 */
+        .stats-section {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 20px;
             text-align: center;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9rem;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            background: rgba(255,255,255,0.05);
-            color: white;
-            font-size: 1rem;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
+        .stat-value {
+            font-size: 2rem;
             font-weight: bold;
-            transition: all 0.3s;
-        }
-        .btn-primary {
             background: linear-gradient(90deg, #667eea, #764ba2);
-            color: white;
-            margin-bottom: 10px;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
-        }
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.15);
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🎯 项目管理系统</h1>
-        <p>管理你的加密货币仪表盘等子系统</p>
+        <div class="year-badge">🎯 2026 年度目标</div>
+        <h1>人生管理系统</h1>
     </div>
     
-    <div class="projects" id="projectsGrid"></div>
-
-    <!-- 添加项目模态框 -->
-    <div class="modal" id="addModal">
-        <div class="modal-content">
-            <h3 class="modal-title">添加子系统</h3>
-            <div class="form-group">
-                <label>名称</label>
-                <input type="text" id="projectName" placeholder="加密货币仪表盘">
+    <!-- 年度目标 -->
+    <div class="goals-section">
+        <h2 class="section-title">📅 年度目标</h2>
+        <div class="goal-grid" id="goalGrid"></div>
+    </div>
+    
+    <!-- 今日计划 -->
+    <div class="today-section">
+        <div class="today-header">
+            <h2 class="section-title" style="margin:0;">📋 今日计划</h2>
+            <span class="today-date" id="todayDate"></span>
+        </div>
+        <div class="todo-list" id="todoList"></div>
+    </div>
+    
+    <!-- 习惯打卡 -->
+    <div class="habits-section">
+        <h2 class="section-title">🔥 习惯养成</h2>
+        <div class="habit-grid" id="habitGrid"></div>
+    </div>
+    
+    <!-- 周计划 -->
+    <div class="week-section">
+        <h2 class="section-title">📆 本周概览</h2>
+        <div class="week-grid" id="weekGrid"></div>
+    </div>
+    
+    <!-- 进度统计 -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="daysLeft">0</div>
+                <div class="stat-label">剩余天数</div>
             </div>
-            <div class="form-group">
-                <label>描述</label>
-                <input type="text" id="projectDesc" placeholder="AHR999 · 恐惧贪婪指数">
+            <div class="stat-card">
+                <div class="stat-value" id="tasksDone">0</div>
+                <div class="stat-label">已完成任务</div>
             </div>
-            <div class="form-group">
-                <label>链接</label>
-                <input type="text" id="projectUrl" placeholder="index.html">
+            <div class="stat-card">
+                <div class="stat-value" id="streakDays">0</div>
+                <div class="stat-label">连续打卡</div>
             </div>
-            <div class="form-group">
-                <label>图标 (emoji)</label>
-                <input type="text" id="projectIcon" placeholder="💰">
+            <div class="stat-card">
+                <div class="stat-value" id="weight">--</div>
+                <div class="stat-label">体重(kg)</div>
             </div>
-            <button class="btn btn-primary" onclick="addProject()">添加</button>
-            <button class="btn btn-secondary" onclick="closeModal()">取消</button>
         </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'dashboard_projects';
-        let projects = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-            {
-                id: '1',
-                name: '加密货币仪表盘',
-                desc: 'AHR999 · 恐惧贪婪 · Top10市值',
-                url: 'index.html',
-                icon: '💰'
-            }
+        const GOALS_KEY = 'life_goals_2026';
+        const TODOS_KEY = 'daily_todos';
+        const HABITS_KEY = 'daily_habits';
+        
+        let goals = JSON.parse(localStorage.getItem(GOALS_KEY)) || [
+            { id: '1', name: '软考高级', desc: '信息系统项目管理师', icon: '📚', deadline: '2026-05-30', progress: 0 },
+            { id: '2', name: '奇门遁甲', desc: '跟随老师学习一年', icon: '🔮', deadline: '2027-02-25', progress: 0 },
+            { id: '3', name: 'X创作者', desc: '6000粉丝目标', icon: '🐦', deadline: '2026-12-31', progress: 0 },
+            { id: '4', name: '健身自律', desc: '体重75kg以下', icon: '💪', deadline: '2026-12-31', progress: 0 },
+            { id: '5', name: '缠论K线', desc: '系统学习', icon: '📈', deadline: '2026-12-31', progress: 0 },
+            { id: '6', name: '营养师证书', desc: '下半年备考', icon: '🥗', deadline: '2026-12-31', progress: 0 }
         ];
-
-        function renderProjects() {
-            const grid = document.getElementById('projectsGrid');
-            grid.innerHTML = projects.map(p => `
-                <div class="project-card">
-                    <button class="delete-btn" onclick="deleteProject('${p.id}')">×</button>
-                    <div class="project-icon">${p.icon}</div>
-                    <div class="project-name">${p.name}</div>
-                    <div class="project-desc">${p.desc}</div>
-                    <a href="${p.url}" class="project-link" target="_blank">打开 →</a>
-                </div>
-            `).join('') + `
-                <div class="project-card add-card" onclick="showModal()">
-                    <div class="add-icon">+</div>
-                    <div class="add-text">添加子系统</div>
-                </div>
-            `;
+        
+        let todos = JSON.parse(localStorage.getItem(TODOS_KEY)) || [
+            { id: '1', title: '软考学习', time: '19:30-21:00', tag: 'study', completed: false },
+            { id: '2', title: '奇门遁甲预习', time: '21:00-22:00', tag: 'study', completed: false },
+            { id: '3', title: '发X推文', time: '随机', tag: 'create', completed: false },
+            { id: '4', title: '运动30分钟', time: '22:00-22:30', tag: '健康', completed: false }
+        ];
+        
+        let habits = JSON.parse(localStorage.getItem(HABITS_KEY)) || [
+            { id: '1', name: '早起', icon: '🌅', streak: 0 },
+            { id: '2', name: '阅读30分钟', icon: '📖', streak: 0 },
+            { id: '3', name: '冥想10分钟', icon: '🧘', streak: 0 },
+            { id: '4', name: '不吃宵夜', icon: '🌙', streak: 0 }
+        ];
+        
+        function renderGoals() {
+            const grid = document.getElementById('goalGrid');
+            grid.innerHTML = goals.map(g => {
+                const daysLeft = Math.ceil((new Date(g.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+                return `
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-icon">${g.icon}</div>
+                            <div class="goal-check ${g.progress >= 100 ? 'completed' : ''}" onclick="toggleGoal('${g.id}')"></div>
+                        </div>
+                        <div class="goal-name">${g.name}</div>
+                        <div class="goal-desc">${g.desc}</div>
+                        <div class="goal-progress">
+                            <div class="goal-progress-bar" style="width:${g.progress}%"></div>
+                        </div>
+                        <div class="goal-date">剩余 ${daysLeft > 0 ? daysLeft : 0} 天 · 截止 ${g.deadline}</div>
+                    </div>
+                `;
+            }).join('');
         }
-
-        function showModal() {
-            document.getElementById('addModal').classList.add('active');
-            document.getElementById('projectName').focus();
-        }
-
-        function closeModal() {
-            document.getElementById('addModal').classList.remove('active');
-            document.getElementById('projectName').value = '';
-            document.getElementById('projectDesc').value = '';
-            document.getElementById('projectUrl').value = '';
-            document.getElementById('projectIcon').value = '';
-        }
-
-        function addProject() {
-            const name = document.getElementById('projectName').value;
-            const desc = document.getElementById('projectDesc').value;
-            const url = document.getElementById('projectUrl').value;
-            const icon = document.getElementById('projectIcon').value || '📁';
-
-            if (!name || !url) return alert('请填写名称和链接');
-
-            projects.push({
-                id: Date.now().toString(),
-                name,
-                desc,
-                url,
-                icon
-            });
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-            renderProjects();
-            closeModal();
-        }
-
-        function deleteProject(id) {
-            if (confirm('确定删除？')) {
-                projects = projects.filter(p => p.id !== id);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-                renderProjects();
+        
+        function toggleGoal(id) {
+            const g = goals.find(x => x.id === id);
+            if (g) {
+                g.progress = g.progress >= 100 ? 0 : Math.min(g.progress + 10, 100);
+                localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+                renderGoals();
             }
         }
-
-        document.addEventListener('DOMContentLoaded', renderProjects);
+        
+        function renderTodos() {
+            const list = document.getElementById('todoList');
+            list.innerHTML = todos.map(t => `
+                <div class="todo-item">
+                    <div class="todo-check ${t.completed ? 'completed' : ''}" onclick="toggleTodo('${t.id}')"></div>
+                    <div class="todo-content">
+                        <div class="todo-title">${t.title}</div>
+                        <div class="todo-time">${t.time}</div>
+                    </div>
+                    <span class="todo-tag tag-${t.tag}">${t.tag}</span>
+                </div>
+            `).join('');
+        }
+        
+        function toggleTodo(id) {
+            const t = todos.find(x => x.id === id);
+            if (t) {
+                t.completed = !t.completed;
+                localStorage.setItem(TODOS_KEY, JSON.stringify(todos));
+                renderTodos();
+                updateStats();
+            }
+        }
+        
+        function renderHabits() {
+            const grid = document.getElementById('habitGrid');
+            grid.innerHTML = habits.map(h => `
+                <div class="habit-card">
+                    <div class="habit-icon">${h.icon}</div>
+                    <div class="habit-name">${h.name}</div>
+                    <div class="habit-streak">连续 ${h.streak} 天</div>
+                    <button class="habit-check" onclick="checkHabit('${h.id}')">打卡</button>
+                </div>
+            `).join('');
+        }
+        
+        function checkHabit(id) {
+            const h = habits.find(x => x.id === id);
+            if (h) {
+                h.streak++;
+                localStorage.setItem(HABITS_KEY, JSON.stringify(habits));
+                renderHabits();
+                updateStats();
+            }
+        }
+        
+        function renderWeek() {
+            const grid = document.getElementById('weekGrid');
+            const now = new Date();
+            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            let html = '';
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(now);
+                d.setDate(d.getDate() - d.getDay() + i);
+                const isToday = d.toDateString() === now.toDateString();
+                html += `
+                    <div class="day-card ${isToday ? 'today' : ''}">
+                        <div class="day-name">周${days[i]}</div>
+                        <div class="day-date">${d.getDate()}</div>
+                        <div class="day-tasks">${isToday ? todos.filter(t => !t.completed).length + '待办' : '计划'}</div>
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+        }
+        
+        function updateStats() {
+            const done = todos.filter(t => t.completed).length;
+            document.getElementById('tasksDone').textContent = done;
+            document.getElementById('daysLeft').textContent = Math.ceil((new Date('2026-12-31') - new Date()) / (1000 * 60 * 60 * 24));
+        }
+        
+        // 初始化
+        document.getElementById('todayDate').textContent = new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' });
+        renderGoals();
+        renderTodos();
+        renderHabits();
+        renderWeek();
+        updateStats();
     </script>
 </body>
 </html>
