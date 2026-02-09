@@ -236,7 +236,7 @@
                 document.getElementById('ahr999').innerHTML = `
                     <div class="value">${ahr999.toFixed(2)}</div>
                     <div class="zone" style="background:${bg};color:${color}">${zone}</div>
-                    <div class="desc">BTC $${price.toLocaleString()} · 200日均 $${(ma200).toLocaleString()}</div>
+                    <div class="desc">BTC $${price.toLocaleString()} · 200日均 $${(ma200).toLocaleString()}<br><a href="https://www.feixiaohao.com/data/ahrdata.html" target="_blank" style="color:rgba(255,255,255,0.4);font-size:0.7rem;">数据来源: 非小号</a></div>
                 `;
             } catch (e) {
                 document.getElementById('ahr999').innerHTML = '<div class="value">1.53</div><div class="zone" style="background:rgba(102,126,234,0.3);color:#667eea">📈 牛市</div>';
