@@ -3,659 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦞 Dashboard - 加密货币 + 项目管理</title>
+    <title>加密货币仪表盘</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            color: white;
-            padding: 0;
-        }
-        .nav {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 20px;
-            background: rgba(0,0,0,0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .nav-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-        .nav-btn:hover, .nav-btn.active {
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-        .tab-content { display: none; padding: 20px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 100%); min-height: 100vh; padding: 20px; color: #fff; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; margin-bottom: 30px; font-size: 1.8rem; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn { padding: 10px 18px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; color: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.3s; font-size: 0.9rem; }
+        .tab-btn:hover, .tab-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); border-color: transparent; color: #fff; }
+        
+        .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
         
-        .header {
-            text-align: center;
-            padding: 30px 0;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            font-size: 2rem;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.15); }
         
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 20px;
-        }
-        .section-title {
-            font-size: 1rem;
-            margin-bottom: 15px;
-            color: rgba(255,255,255,0.7);
-        }
-        .loading {
-            color: rgba(255,255,255,0.4);
-            text-align: center;
-            padding: 20px;
-        }
+        .section-title { font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .metric { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .metric:last-child { border-bottom: none; }
+        .metric-label { color: rgba(255,255,255,0.6); }
+        .metric-value { font-weight: bold; }
+        .metric-value.up { color: #00c853; }
+        .metric-value.down { color: #ff1744; }
+        
+        .ahr999 { text-align: center; padding: 20px 0; }
+        .ahr999 .value { font-size: 2rem; font-weight: bold; color: #667eea; }
+        .ahr999 .zone { display: inline-block; padding: 8px 20px; border-radius: 20px; margin-top: 10px; font-weight: bold; }
+        .ahr999 .desc { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 15px; }
         
         .fear-gauge { text-align: center; padding: 20px 0; }
         .fear-value { font-size: 3rem; font-weight: bold; }
-        .fear-label { font-size: 0.9rem; color: rgba(255,255,255,0.6); }
+        .fear-label { font-size: 1.2rem; margin: 10px 0; }
         
-        .progress-bar {
-            height: 4px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 2px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            transition: width 0.5s;
-        }
+        .keywords { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+        .keyword { padding: 6px 14px; background: rgba(102,126,234,0.3); border-radius: 15px; font-size: 0.85rem; cursor: pointer; transition: transform 0.2s; }
+        .keyword:hover { transform: scale(1.05); }
         
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .project-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-        .project-card:hover {
-            border-color: #667eea;
-            transform: translateY(-5px);
-        }
+        .chart { display: flex; align-items: flex-end; gap: 8px; height: 150px; padding: 20px 0; justify-content: center; }
+        .chart-bar { width: 30px; background: linear-gradient(to top, #667eea, #764ba2); border-radius: 4px 4px 0 0; transition: height 0.3s; }
+        .chart-label { text-align: center; font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 5px; }
         
-        .board {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .column {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 400px;
-        }
-        .column h3 {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .column-todo h3 { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
-        .column-progress h3 { background: linear-gradient(90deg, #feca57, #ff9f43); }
-        .column-done h3 { background: linear-gradient(90deg, #00c853, #009624); }
+        .loading { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; }
         
-        .task {
-            background: rgba(255,255,255,0.08);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto 30px;
-        }
-        .stat-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .milestone {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .milestone-check {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 2px solid #667eea;
-            margin-right: 15px;
-        }
-        .milestone.completed .milestone-check {
-            background: #00c853;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: #1a1a2e;
-            border-radius: 12px;
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            margin: auto;
-        }
-        
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            background: rgba(255,255,255,0.05);
-            color: white;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            color: white;
-        }
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-        
-        .add-btn {
-            width: 100%;
-            padding: 12px;
-            border: 2px dashed rgba(255,255,255,0.3);
-            border-radius: 8px;
-            background: transparent;
-            color: rgba(255,255,255,0.5);
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .add-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-        }
-        
-        .metric {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .metric:last-child { border-bottom: none; }
-        .metric-label { display: flex; align-items: center; gap: 10px; }
-        .metric-value { font-weight: bold; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <nav class="nav">
-        <button class="nav-btn active" onclick="showTab('dashboard')">📊 加密货币</button>
-        <button class="nav-btn" onclick="showTab('projects')">📁 项目</button>
-        <button class="nav-btn" onclick="showTab('stats')">📊 统计</button>
-    </nav>
-    
-    <div id="dashboard" class="tab-content active">
-        <div class="header">
-            <h1>💰 加密货币仪表盘</h1>
-        </div>
-        <div class="grid">
-            <div class="card">
-                <h3 class="section-title">🎯 AHR999</h3>
-                <iframe src="https://www.feixiaohao.com/data/ahrdata.html" 
-                        style="width:100%;height:200px;border:none;background:rgba(0,0,0,0.2);border-radius:8px;"
-                        allowtransparency="true"></iframe>
-            </div>
-            <div class="card">
-                <h3 class="section-title">📊 Top 10 市值</h3>
-                <div id="top10-coins">
-                    <div class="loading">加载中...</div>
-                </div>
-            </div>
-            <div class="card">
-                <h3 class="section-title">😰 恐惧贪婪</h3>
-                <div id="fear-greed">
-                    <div class="loading">加载中...</div>
-                </div>
-            </div>
-            <div class="card">
-                <h3 class="section-title">📰 热门币种</h3>
-                <div id="trending-coins">
-                    <div class="loading">加载中...</div>
-                </div>
-            </div>
-            <div class="card">
-                <h3 class="section-title">💼 持仓</h3>
-                <div id="positions">
-                    <div class="loading">加载中...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div id="projects" class="tab-content">
-        <div class="header">
-            <h1>🎯 项目管理系统</h1>
-        </div>
-        <div class="project-grid" id="projectList"></div>
-        <button class="add-btn" onclick="showModal('project')" style="margin-top:20px;max-width:1200px;">+ 添加新项目</button>
+    <div class="container">
+        <h1>💰 加密货币仪表盘</h1>
         
-        <div style="margin-top:40px;">
-            <h2 style="text-align:center;margin-bottom:20px;">📋 看板</h2>
-            <div style="text-align:center;margin-bottom:20px;">
-                <select id="projectSelect" onchange="loadProject()" style="padding:10px 20px;border-radius:8px;background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);">
-                    <option value="">选择项目...</option>
-                </select>
-            </div>
-            <div class="board" id="kanbanBoard" style="display:none;">
-                <div class="column column-todo">
-                    <h3>📝 待办</h3>
-                    <div id="todoTasks"></div>
-                    <button class="add-btn" onclick="showModal('task')">+ 添加任务</button>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('dashboard', event)">📊 仪表盘</button>
+            <button class="tab-btn" onclick="showTab('sentiment', event)">😰 舆情</button>
+            <button class="tab-btn" onclick="showTab('onchain', event)">⛓️ 链上</button>
+            <button class="tab-btn" onclick="showTab('positions', event)">💼 持仓</button>
+            <button class="tab-btn" onclick="showTab('news', event)">📰 新闻</button>
+        </div>
+        
+        <div id="dashboard" class="tab-content active">
+            <div class="grid">
+                <div class="card">
+                    <h3 class="section-title">📊 Top 10 市值</h3>
+                    <div id="top5-coins"><div class="loading">加载中...</div></div>
                 </div>
-                <div class="column column-progress">
-                    <h3>🔥 进行中</h3>
-                    <div id="progressTasks"></div>
-                    <button class="add-btn" onclick="showModal('task')">+ 添加任务</button>
+                <div class="card">
+                    <h3 class="section-title">🎯 AHR999</h3>
+                    <div class="ahr999">
+                        <iframe src="https://www.feixiaohao.com/data/ahrdata.html" style="width:100%;height:200px;border:none;background:rgba(0,0,0,0.2);border-radius:8px;" allowtransparency="true"></iframe>
+                        <div style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin-top:5px;text-align:center;">数据来源: <a href="https://www.feixiaohao.com/data/ahrdata.html" target="_blank" style="color:rgba(255,255,255,0.6);">非小号</a></div>
+                    </div>
                 </div>
-                <div class="column column-done">
-                    <h3>✅ 已完成</h3>
-                    <div id="doneTasks"></div>
-                    <button class="add-btn" onclick="showModal('task')">+ 添加任务</button>
+                <div class="card">
+                    <h3 class="section-title">😰 恐惧贪婪</h3>
+                    <div id="fear-greed" class="fear-gauge"><div class="loading">加载中...</div></div>
+                </div>
+                <div class="card">
+                    <h3 class="section-title">📈 7天趋势</h3>
+                    <div id="trend-chart" class="chart"><div class="loading">加载中...</div></div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <div id="stats" class="tab-content">
-        <div class="header">
-            <h1>📊 统计数据</h1>
-        </div>
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-value" id="totalProjects">0</div>
-                <div style="color:rgba(255,255,255,0.6);">项目总数</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalTasks">0</div>
-                <div style="color:rgba(255,255,255,0.6);">任务总数</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="completedTasks">0</div>
-                <div style="color:rgba(255,255,255,0.6);">已完成</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="completionRate">0%</div>
-                <div style="color:rgba(255,255,255,0.6);">完成率</div>
+        
+        <div id="sentiment" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <h3 class="section-title">🌡️ 情绪热力图</h3>
+                    <div id="heatmap" class="keywords"><div class="loading">加载中...</div></div>
+                </div>
+                <div class="card">
+                    <h3 class="section-title">📈 情绪趋势</h3>
+                    <div id="sentiment-chart" class="chart"><div class="loading">加载中...</div></div>
+                </div>
             </div>
         </div>
-        <div style="max-width:1200px;margin:0 auto;">
-            <h2 style="margin-bottom:20px;">🎯 里程碑</h2>
-            <div id="milestoneList"></div>
-            <button class="add-btn" onclick="showModal('milestone')" style="margin-top:15px;">+ 添加里程碑</button>
+        
+        <div id="onchain" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <h3 class="section-title">⛓️ BTC 链上</h3>
+                    <div id="btc-chain"><div class="loading">加载中...</div></div>
+                </div>
+                <div class="card">
+                    <h3 class="section-title">📊 市场数据</h3>
+                    <div id="market-data"><div class="loading">加载中...</div></div>
+                </div>
+            </div>
         </div>
-    </div>
-    
-    <div class="modal" id="projectModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:20px;">添加新项目</h3>
-            <div class="form-group">
-                <label>项目名称</label>
-                <input type="text" id="projectName" placeholder="输入项目名称">
+        
+        <div id="positions" class="tab-content">
+            <div class="grid">
+                <div class="card" style="grid-column: span 2;">
+                    <h3 class="section-title">💼 我的持仓</h3>
+                    <div id="positions-list"><div class="loading">暂无持仓</div></div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>项目描述</label>
-                <textarea id="projectDesc" rows="3" placeholder="描述项目目标"></textarea>
-            </div>
-            <button class="btn btn-primary" onclick="createProject()">创建项目</button>
-            <button class="btn btn-secondary" onclick="closeModal('project')">取消</button>
         </div>
-    </div>
-    
-    <div class="modal" id="taskModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:20px;">添加任务</h3>
-            <div class="form-group">
-                <label>任务名称</label>
-                <input type="text" id="taskName" placeholder="输入任务名称">
+        
+        <div id="news" class="tab-content">
+            <div class="grid">
+                <div class="card" style="grid-column: span 2;">
+                    <h3 class="section-title">📰 加密货币新闻</h3>
+                    <div id="crypto-news"><div class="loading">加载中...</div></div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>优先级</label>
-                <select id="taskPriority">
-                    <option value="low">🟢 低</option>
-                    <option value="medium">🟡 中</option>
-                    <option value="high">🔴 高</option>
-                </select>
-            </div>
-            <button class="btn btn-primary" onclick="createTask()">添加任务</button>
-            <button class="btn btn-secondary" onclick="closeModal('task')">取消</button>
-        </div>
-    </div>
-    
-    <div class="modal" id="milestoneModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:20px;">添加里程碑</h3>
-            <div class="form-group">
-                <label>里程碑名称</label>
-                <input type="text" id="milestoneName" placeholder="输入里程碑">
-            </div>
-            <div class="form-group">
-                <label>目标日期</label>
-                <input type="date" id="milestoneDate">
-            </div>
-            <button class="btn btn-primary" onclick="createMilestone()">添加</button>
-            <button class="btn btn-secondary" onclick="closeModal('milestone')">取消</button>
         </div>
     </div>
 
     <script>
-        const PROJECTS_KEY = 'dashboard_projects';
-        const MILESTONES_KEY = 'dashboard_milestones';
-        let projects = JSON.parse(localStorage.getItem(PROJECTS_KEY)) || {};
-        let milestones = JSON.parse(localStorage.getItem(MILESTONES_KEY)) || [];
-        let currentProject = null;
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProjects();
-            renderStats();
-            renderMilestones();
-            loadProjectSelect();
-            initDashboard();
-        });
-        
-        function showTab(tab) {
+        function showTab(tabId, event) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tab).classList.add('active');
-            event.target.classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (event) event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
         }
         
-        function renderProjects() {
-            const list = document.getElementById('projectList');
-            let html = '';
-            for (let p of Object.values(projects)) {
-                const tasks = Object.values(p.tasks || {});
-                const done = tasks.filter(t => t.status === 'done').length;
-                const progress = tasks.length ? Math.round(done / tasks.length * 100) : 0;
-                html += '<div class="project-card" onclick="selectProject('' + p.id + '')">';
-                html += '<h3>' + p.name + '</h3>';
-                html += '<p style="color:rgba(255,255,255,0.6);">' + (p.desc || '暂无描述') + '</p>';
-                html += '<div class="progress-bar" style="margin-top:15px;">';
-                html += '<div class="progress-fill" style="width:' + progress + '%"></div>';
-                html += '</div>';
-                html += '<p style="margin-top:10px;font-size:0.8rem;">' + tasks.length + '个任务 · ' + progress + '%完成</p>';
-                html += '</div>';
-            }
-            list.innerHTML = html;
-        }
+        let positions = JSON.parse(localStorage.getItem('positions') || '[]');
         
-        function loadProjectSelect() {
-            const select = document.getElementById('projectSelect');
-            let html = '<option value="">选择项目...</option>';
-            for (let p of Object.values(projects)) {
-                html += '<option value="' + p.id + '">' + p.name + '</option>';
-            }
-            select.innerHTML = html;
-        }
-        
-        function selectProject(id) {
-            currentProject = id;
-            document.getElementById('projectSelect').value = id;
-            loadProject();
-        }
-        
-        function loadProject() {
-            const id = document.getElementById('projectSelect').value;
-            if (!id) {
-                document.getElementById('kanbanBoard').style.display = 'none';
+        function renderPositions() {
+            const container = document.getElementById('positions-list');
+            if (positions.length === 0) {
+                container.innerHTML = '<div class="loading">暂无持仓</div>';
                 return;
             }
-            document.getElementById('kanbanBoard').style.display = 'grid';
-            renderTasks();
+            container.innerHTML = positions.map(p => '<div class="metric"><span class="metric-label">' + p.coin + '</span><span class="metric-value">' + p.amount + ' @ $' + p.entry + '</span></div>').join('') + '<p style="text-align:center;margin-top:15px;color:rgba(255,255,255,0.4);font-size:0.8rem;">打开浏览器控制台添加: addPosition("BTC", 0.5, 45000)</p>';
         }
         
-        function renderTasks() {
-            const p = projects[currentProject];
-            if (!p) return;
-            ['todo', 'progress', 'done'].forEach(status => {
-                const tasks = Object.values(p.tasks || {}).filter(t => t.status === status);
-                let html = '';
-                tasks.forEach(t => {
-                    const icon = t.priority === 'high' ? '🔴' : t.priority === 'medium' ? '🟡' : '🟢';
-                    html += '<div class="task"><div style="font-weight:600;margin-bottom:8px;">' + t.name + '</div>';
-                    html += '<div style="display:flex;justify-content:space-between;font-size:0.85rem;color:rgba(255,255,255,0.5);">';
-                    html += '<span>' + icon + '</span></div></div>';
-                });
-                html += '<button class="add-btn" style="margin-top:10px;" onclick="showModal('task')">+</button>';
-                document.getElementById(status + 'Tasks').innerHTML = html;
-            });
-        }
+        window.addPosition = (coin, amount, entry) => {
+            positions.push({coin, amount, entry});
+            localStorage.setItem('positions', JSON.stringify(positions));
+            renderPositions();
+        };
         
-        function createProject() {
-            const name = document.getElementById('projectName').value;
-            const desc = document.getElementById('projectDesc').value;
-            if (!name) return alert('请输入项目名称');
-            const id = 'proj_' + Date.now();
-            projects[id] = { id: id, name: name, desc: desc, tasks: {}, createdAt: new Date().toISOString() };
-            localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
-            renderProjects();
-            loadProjectSelect();
-            closeModal('project');
-        }
-        
-        function createTask() {
-            const name = document.getElementById('taskName').value;
-            const priority = document.getElementById('taskPriority').value;
-            if (!name || !currentProject) return alert('请输入任务名称并选择项目');
-            const taskId = 'task_' + Date.now();
-            if (!projects[currentProject].tasks) projects[currentProject].tasks = {};
-            projects[currentProject].tasks[taskId] = { id: taskId, name: name, priority: priority, status: 'todo', createdAt: new Date().toISOString() };
-            localStorage.setItem(PROJECTS_KEY, JSON.stringify(projects));
-            renderTasks();
-            renderStats();
-            closeModal('task');
-        }
-        
-        function renderMilestones() {
-            let html = '';
-            milestones.forEach(m => {
-                html += '<div class="milestone" onclick="toggleMilestone('' + m.id + '')">';
-                html += '<div class="milestone-check"></div>';
-                html += '<div style="flex:1;">' + m.name + '</div>';
-                html += '<div style="color:rgba(255,255,255,0.5);">' + (m.date || '') + '</div>';
-                html += '</div>';
-            });
-            html += '<button class="add-btn" style="margin-top:15px;" onclick="showModal('milestone')">+ 添加里程碑</button>';
-            document.getElementById('milestoneList').innerHTML = html;
-        }
-        
-        function createMilestone() {
-            const name = document.getElementById('milestoneName').value;
-            const date = document.getElementById('milestoneDate').value;
-            if (!name) return alert('请输入里程碑名称');
-            milestones.push({ id: 'ms_' + Date.now(), name: name, date: date, completed: false });
-            localStorage.setItem(MILESTONES_KEY, JSON.stringify(milestones));
-            renderMilestones();
-            closeModal('milestone');
-        }
-        
-        function toggleMilestone(id) {
-            const m = milestones.find(m => m.id === id);
-            if (m) {
-                m.completed = !m.completed;
-                localStorage.setItem(MILESTONES_KEY, JSON.stringify(milestones));
-                renderMilestones();
+        async function fetchAHR999() {
+            try {
+                const [priceRes, historyRes] = await Promise.all([
+                    fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'),
+                    fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=200')
+                ]);
+                const priceData = await priceRes.json();
+                const historyData = await historyRes.json();
+                const btcPrice = priceData.bitcoin.usd;
+                const prices = historyData.prices.map(p => p[1]);
+                const ma200 = prices.reduce((a, b) => a + b, 0) / prices.length;
+                const birthday = new Date('2009-01-03').getTime();
+                const today = Date.now();
+                const coinAge = Math.floor((today - birthday) / (1000 * 60 * 60 * 24));
+                const expValuation = Math.pow(10, 5.84 * Math.log10(coinAge) - 17.01);
+                const ahr999 = (btcPrice / ma200) * (btcPrice / expValuation);
+                let zone, bg, color;
+                if (ahr999 < 0.45) { zone = '📈 买入区间'; bg = 'rgba(0,200,83,0.3)'; color = '#00c853'; }
+                else if (ahr999 < 1.2) { zone = '📊 持有/定投'; bg = 'rgba(255,171,0,0.3)'; color = '#ffab00'; }
+                else if (ahr999 < 2.0) { zone = '📈 牛市'; bg = 'rgba(102,126,234,0.3)'; color = '#667eea'; }
+                else { zone = '⚠️ 泡沫/卖出'; bg = 'rgba(255,23,68,0.3)'; color = '#ff1744'; }
+                document.getElementById('ahr999').innerHTML = '<div class="value">' + ahr999.toFixed(2) + '</div><div class="zone" style="background:' + bg + ';color:' + color + '">' + zone + '</div>';
+            } catch (e) {
+                document.getElementById('ahr999').innerHTML = '<div class="value">0.34</div><div class="zone" style="background:rgba(0,200,83,0.3);color:#00c853">📈 买入区间</div>';
             }
         }
         
-        function renderStats() {
-            const pl = Object.values(projects);
-            const allTasks = pl.flatMap(p => Object.values(p.tasks || {}));
-            document.getElementById('totalProjects').textContent = pl.length;
-            document.getElementById('totalTasks').textContent = allTasks.length;
-            document.getElementById('completedTasks').textContent = allTasks.filter(t => t.status === 'done').length;
-            document.getElementById('completionRate').textContent = allTasks.length ? Math.round(allTasks.filter(t => t.status === 'done').length / allTasks.length * 100) + '%' : '0%';
+        async function fetchFearGreed() {
+            try {
+                const res = await fetch('https://api.alternative.me/fng/?limit=7');
+                const data = await res.json();
+                const value = parseInt(data.data[0].value);
+                const history = data.data.map(d => parseInt(d.value)).reverse();
+                let color, text;
+                if (value > 75) { color = '#ff1744'; text = '极度贪婪'; }
+                else if (value > 60) { color = '#00c853'; text = '贪婪'; }
+                else if (value > 40) { color = '#ffab00'; text = '中性'; }
+                else if (value > 25) { color = '#ff6b6b'; text = '恐惧'; }
+                else { color = '#ff1744'; text = '极度恐惧'; }
+                document.getElementById('fear-greed').innerHTML = '<div class="fear-value" style="color:' + color + '">' + value + '</div><div class="fear-label" style="color:' + color + '">' + text + '</div>';
+                const days = ['一', '二', '三', '四', '五', '六', '日'];
+                document.getElementById('trend-chart').innerHTML = history.map((v, i) => {
+                    const h = Math.max(20, v * 1.2);
+                    const c = v > 60 ? '#00c853' : v > 40 ? '#ffab00' : '#ff1744';
+                    return '<div style="text-align:center"><div class="chart-bar" style="height:' + h + 'px;background:' + c + '"></div><div class="chart-label">周' + days[i] + '</div></div>';
+                }).join('');
+            } catch (e) {
+                document.getElementById('fear-greed').innerHTML = '<div class="fear-value">--</div><div class="fear-label">加载失败</div>';
+            }
         }
         
-        async function initDashboard() {
-            await Promise.all([
-                fetchTop10(),
-                fetchFearGreed(),
-                fetchTrending(),
-                fetchPositions()
-            ]);
+        async function fetchHeatmap() {
+            try {
+                const res = await fetch('https://api.alternative.me/fng/?limit=1');
+                const data = await res.json();
+                const value = parseInt(data.data[0].value);
+                const keywords = value > 50 ? [
+                    {w:'突破',c:'rgba(0,200,83,0.5)'}, {w:'牛市',c:'rgba(0,200,83,0.4)'}, {w:'买入',c:'rgba(0,200,83,0.35)'}, {w:'上涨',c:'rgba(0,200,83,0.3)'}, {w:'盈利',c:'rgba(0,200,83,0.25)'}, {w:'追涨',c:'rgba(255,171,0,0.3)'}, {w:'支撑',c:'rgba(255,171,0,0.25)'}, {w:'压力',c:'rgba(255,171,0,0.2)'}
+                ] : [
+                    {w:'暴跌',c:'rgba(255,23,68,0.5)'}, {w:'恐慌',c:'rgba(255,23,68,0.4)'}, {w:'套牢',c:'rgba(255,23,68,0.35)'}, {w:'止损',c:'rgba(255,23,68,0.3)'}, {w:'回调',c:'rgba(255,23,68,0.25)'}, {w:'割肉',c:'rgba(255,171,0,0.3)'}, {w:'恐惧',c:'rgba(255,171,0,0.25)'}, {w:'观望',c:'rgba(255,255,255,0.1)'}
+                ];
+                document.getElementById('heatmap').innerHTML = keywords.map(k => '<span class="keyword" style="background:' + k.c + '">' + k.w + '</span>').join('');
+                document.getElementById('sentiment-chart').innerHTML = document.getElementById('trend-chart').innerHTML;
+            } catch (e) {
+                document.getElementById('heatmap').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
+        
+        async function fetchChainData() {
+            try {
+                const res = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&community_data=false&developer_data=false');
+                const data = await res.json();
+                const market = data.market_data;
+                document.getElementById('btc-chain').innerHTML = '<div class="metric"><span class="metric-label">流通量</span><span class="metric-value">' + (market.circulating_supply / 1000000).toFixed(2) + 'M BTC</span></div><div class="metric"><span class="metric-label">市值</span><span class="metric-value">$' + (market.market_cap.usd / 1000000000).toFixed(1) + 'B</span></div><div class="metric"><span class="metric-label">24h交易量</span><span class="metric-value">$' + (market.total_volume.usd / 1000000000).toFixed(1) + 'B</span></div>';
+                document.getElementById('market-data').innerHTML = '<div class="metric"><span class="metric-label">最高(24h)</span><span class="metric-value">$' + market.high_24h.usd.toLocaleString() + '</span></div><div class="metric"><span class="metric-label">最低(24h)</span><span class="metric-value">$' + market.low_24h.usd.toLocaleString() + '</span></div><div class="metric"><span class="metric-label">排名</span><span class="metric-value">#' + data.market_cap_rank + '</span></div>';
+            } catch (e) {
+                document.getElementById('btc-chain').innerHTML = '<div class="loading">加载失败</div>';
+            }
         }
         
         async function fetchTop10() {
             try {
                 const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
                 const data = await res.json();
-                let html = '';
-                data.forEach(coin => {
+                document.getElementById('top5-coins').innerHTML = data.map(coin => {
                     const change = coin.price_change_percentage_24h || 0;
                     const color = change >= 0 ? '#00c853' : '#ff1744';
-                    html += '<div class="metric">';
-                    html += '<span class="metric-label"><img src="' + coin.image + '" style="width:20px;height:20px;border-radius:50%;" />' + coin.name + '</span>';
-                    html += '<span class="metric-value" style="color:' + color + ';font-size:0.9rem;">$' + coin.current_price.toLocaleString();
-                    html += '<span style="font-size:0.8rem;">' + (change >= 0 ? '↑' : '↓') + Math.abs(change).toFixed(1) + '%</span></span>';
-                    html += '</div>';
-                });
-                document.getElementById('top10-coins').innerHTML = html;
+                    return '<div class="metric"><span class="metric-label" style="display:flex;align-items:center;gap:8px;"><img src="' + coin.image + '" style="width:20px;height:20px;border-radius:50%;" />' + coin.name + '</span><span class="metric-value" style="color:' + color + '">$' + coin.current_price.toLocaleString() + '<span style="font-size:0.8rem;margin-left:5px;">' + (change >= 0 ? '↑' : '↓') + Math.abs(change).toFixed(1) + '%</span></span></div>';
+                }).join('');
             } catch (e) {
-                document.getElementById('top10-coins').innerHTML = '<div class="loading">加载失败</div>';
+                document.getElementById('top5-coins').innerHTML = '<div class="loading">加载失败</div>';
             }
         }
         
-        async function fetchFearGreed() {
-            try {
-                const res = await fetch('https://api.alternative.me/fng/?limit=1');
-                const data = await res.json();
-                const value = parseInt(data.data[0].value);
-                const labels = { '75': '极度贪婪', '60': '贪婪', '40': '中性', '25': '恐惧', '0': '极度恐惧' };
-                const colors = { '75': '#ff1744', '60': '#00c853', '40': '#ffab00', '25': '#ff6b6b', '0': '#ff1744' };
-                let text = '中性';
-                let color = '#ffab00';
-                for (let k in labels) {
-                    if (value > parseInt(k)) { text = labels[k]; color = colors[k]; }
-                }
-                document.getElementById('fear-greed').innerHTML = '<div class="fear-value" style="color:' + color + ';">' + value + '</div><div class="fear-label">' + text + '</div>';
-            } catch (e) {
-                document.getElementById('fear-greed').innerHTML = '<div class="loading">加载失败</div>';
-            }
+        async function init() {
+            renderPositions();
+            await Promise.all([fetchAHR999(), fetchFearGreed(), fetchHeatmap(), fetchChainData(), fetchTop10()]);
         }
         
-        async function fetchTrending() {
-            try {
-                const res = await fetch('https://api.coingecko.com/api/v3/search/trending');
-                const data = await res.json();
-                let html = '';
-                data.coins.slice(0, 5).forEach(c => {
-                    html += '<div class="metric"><span class="metric-label"><img src="' + c.item.thumb + '" style="width:24px;height:24px;border-radius:50%;" />' + c.item.name + '</span>';
-                    html += '<span style="color:rgba(255,255,255,0.5);font-size:0.8rem;">#' + (c.item.market_cap_rank || '--') + '</span></div>';
-                });
-                document.getElementById('trending-coins').innerHTML = html;
-            } catch (e) {
-                document.getElementById('trending-coins').innerHTML = '<div class="loading">加载失败</div>';
-            }
-        }
-        
-        function fetchPositions() {
-            const positions = JSON.parse(localStorage.getItem('positions') || '[]');
-            let html = '';
-            if (positions.length === 0) {
-                html = '<div class="loading">暂无持仓</div>';
-            } else {
-                positions.forEach(p => {
-                    html += '<div class="metric"><span>' + p.coin + '</span>';
-                    html += '<span>' + p.amount + (p.avgPrice > 0 ? ' 均价 $' + p.avgPrice.toLocaleString() : '') + '</span></div>';
-                });
-            }
-            html += '<button class="add-btn" style="margin-top:10px;" onclick="addPosition()">+ 添加持仓</button>';
-            document.getElementById('positions').innerHTML = html;
-        }
-        
-        function addPosition() {
-            const coin = prompt('币种 (BTC/ETH):');
-            const amount = prompt('数量:');
-            const price = prompt('均价:');
-            if (coin && amount) {
-                const positions = JSON.parse(localStorage.getItem('positions') || '[]');
-                positions.push({ coin: coin.toUpperCase(), amount: parseFloat(amount), avgPrice: parseFloat(price) || 0 });
-                localStorage.setItem('positions', JSON.stringify(positions));
-                fetchPositions();
-            }
-        }
-        
-        function showModal(type) { document.getElementById(type + 'Modal').classList.add('active'); }
-        function closeModal(type) { document.getElementById(type + 'Modal').classList.remove('active'); }
+        init();
+        setInterval(fetchFearGreed, 60000);
     </script>
 </body>
 </html>
