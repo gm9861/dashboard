@@ -88,8 +88,8 @@
                     </div>
                 </div>
                 <div class="card">
-                    <h3 class="section-title">📊 7天趋势</h3>
-                    <div id="trend-chart" class="chart">
+                    <h3 class="section-title">📊 Top 5 市值</h3>
+                    <div id="top5-coins">
                         <div class="loading">加载中...</div>
                     </div>
                 </div>
@@ -316,6 +316,34 @@
             }
         }
         
+        // Top 5 代币
+        async function fetchTop5() {
+            try {
+                const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=5&page=1&sparkline=false');
+                const data = await res.json();
+                
+                document.getElementById('top5-coins').innerHTML = data.map(coin => {
+                    const change = coin.price_change_percentage_24h || 0;
+                    const color = change >= 0 ? '#00c853' : '#ff1744';
+                    const symbol = coin.symbol.toUpperCase();
+                    return `
+                        <div class="metric">
+                            <span class="metric-label" style="display:flex;align-items:center;gap:8px;">
+                                <img src="${coin.image}" style="width:20px;height:20px;border-radius:50%;" />
+                                ${coin.name}
+                            </span>
+                            <span class="metric-value" style="color:${color}">
+                                $${coin.current_price.toLocaleString()}
+                                <span style="font-size:0.8rem;margin-left:5px;">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(1)}%</span>
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                document.getElementById('top5-coins').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
+        
         // 初始化
         async function init() {
             renderPositions();
@@ -324,7 +352,8 @@
                 fetchAHR999(),
                 fetchFearGreed(),
                 fetchHeatmap(),
-                fetchChainData()
+                fetchChainData(),
+                fetchTop5()
             ]);
         }
         
