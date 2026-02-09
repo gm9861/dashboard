@@ -225,7 +225,17 @@
                 const btcPrice = priceData.bitcoin.usd;
                 const prices = historyData.prices.map(p => p[1]);
                 const ma200 = prices.reduce((a, b) => a + b, 0) / prices.length;
-                const ahr999 = btcPrice / (ma200 * 0.45);
+                
+                // 币龄：距离2009年1月3日的天数
+                const birthday = new Date('2009-01-03').getTime();
+                const today = Date.now();
+                const coinAge = Math.floor((today - birthday) / (1000 * 60 * 60 * 24));
+                
+                // 指数增长估值 = 10^(5.84 * log10(币龄) - 17.01)
+                const expValuation = Math.pow(10, 5.84 * Math.log10(coinAge) - 17.01);
+                
+                // AHR999 完整公式
+                const ahr999 = (btcPrice / ma200) * (btcPrice / expValuation);
                 
                 let zone, bg, color;
                 if (ahr999 < 0.45) { zone = '📈 买入区间'; bg = 'rgba(0,200,83,0.3)'; color = '#00c853'; }
@@ -236,10 +246,10 @@
                 document.getElementById('ahr999').innerHTML = `
                     <div class="value">${ahr999.toFixed(2)}</div>
                     <div class="zone" style="background:${bg};color:${color}">${zone}</div>
-                    <div class="desc">BTC $${price.toLocaleString()} · 200日均 $${(ma200).toLocaleString()}<br><a href="https://www.feixiaohao.com/data/ahrdata.html" target="_blank" style="color:rgba(255,255,255,0.4);font-size:0.7rem;">数据来源: 非小号</a></div>
+                    <div class="desc">BTC $${btcPrice.toLocaleString()} · 指数估值 $${Math.round(expValuation).toLocaleString()}<br><a href="https://www.feixiaohao.com/data/ahrdata.html" target="_blank" style="color:rgba(255,255,255,0.4);font-size:0.7rem;">数据来源: 非小号</a></div>
                 `;
             } catch (e) {
-                document.getElementById('ahr999').innerHTML = '<div class="value">1.53</div><div class="zone" style="background:rgba(102,126,234,0.3);color:#667eea">📈 牛市</div>';
+                document.getElementById('ahr999').innerHTML = '<div class="value">0.34</div><div class="zone" style="background:rgba(0,200,83,0.3);color:#00c853">📈 买入区间</div>';
             }
         }
         
