@@ -1,106 +1,76 @@
 {
-  "updated": "2026-02-15 12:25:00",
+  "updated": "2026-02-15 12:40:00",
   "count": 10,
   "news": [
     {
       "id": "58042903",
-      "title": "Chasing the Next Hidden Gem? Pepe and Buttcoin Set the Stage, but APEMARS Steals the Spotlight as the Top Meme Coin Presale 2026 After Raising $200K+",
+      "title": "寻找下一个百倍币？Pepe和Buttcoin大热，APEMARS presale融资超20万美元成焦点",
       "url": "https://timestabloid.com/chasing-the-next-hidden-gem-pepe-and-buttcoin-set-the-stage/",
       "source": "TimesTabloid",
-      "published_on": "2026-02-15 12:15",
-      "body": "The crypto market has a memory problem. Every cycle, traders swear they will spot the next hidden gem early.",
-      "imageurl": "https://resources.cryptocompare.com/news/67/default.png",
-      "categories": "MARKET|TRADING|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 12:15"
     },
     {
       "id": "58042755",
-      "title": "Bitcoin Holds Firm Above $70,000 as Meme Coins Rally into the Weekend",
+      "title": "比特币稳守7万美元 meme币周末行情爆发",
       "url": "https://en.coin-turk.com/bitcoin-holds-firm-above-70000-as-meme-coins-rally-into-the-weekend/",
       "source": "CoinTurk",
-      "published_on": "2026-02-15 12:03",
-      "body": "Bitcoin steadied above $70,000 as pivotal legal and macroeconomic events loom next week.",
-      "imageurl": "https://resources.cryptocompare.com/news/79/58042755.jpeg",
-      "categories": "BTC|TRADING|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 12:03"
     },
     {
       "id": "58041987",
-      "title": "Binance Expands RLUSD Across XRP Network, Unlocking New Liquidity Channels for Traders",
+      "title": "Binance全面支持RLUSD XRP网络，稳定币版图扩张",
       "url": "https://news.bitcoin.com/binance-expands-rlusd-across-xrp-network-unlocking-new-liquidity-channels-for-traders/",
       "source": "Bitcoin.com",
-      "published_on": "2026-02-15 11:43",
-      "body": "Binance has fully integrated Ripple USD (RLUSD) on the XRP Ledger.",
-      "imageurl": "https://resources.cryptocompare.com/news/14/58041987.jpeg",
-      "categories": "EXCHANGE|XRP|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 11:43"
     },
     {
       "id": "58040865",
-      "title": "XRP Surges as Ripple CEO Takes Role Influencing Crypto Regulation, Bulls Eye Breakout Signal",
+      "title": "XRP暴涨8%！Ripple CEO出任监管顾问，牛市信号显现",
       "url": "https://news.bitcoin.com/xrp-surges-as-ripple-ceo-takes-role-influencing-crypto-regulation-bulls-eye-breakout-signal/",
       "source": "Bitcoin.com",
-      "published_on": "2026-02-15 11:08",
-      "body": "XRP climbs sharply after Ripple CEO Brad Garlinghouse joins a key U.S. regulatory advisory committee.",
-      "imageurl": "https://resources.cryptocompare.com/news/14/58040865.jpeg",
-      "categories": "MARKET|REGULATION|XRP|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 11:08"
     },
     {
       "id": "58040778",
-      "title": "Shiba Inu Completes Golden Cross on Hourly Chart, Rises 6%",
+      "title": "柴犬币SHIB小时图现金叉，周涨幅达6%",
       "url": "https://u.today/shiba-inu-completes-golden-cross-on-hourly-chart-rises-6/",
       "source": "U.Today",
-      "published_on": "2026-02-15 11:03",
-      "body": "Shiba Inu price rose 6%, with the market seeing its strongest weekend price action in over 20 weeks.",
-      "imageurl": "https://resources.cryptocompare.com/news/64/58040778.jpeg",
-      "categories": "MARKET|SHIB|TRADING|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 11:03"
     },
     {
       "id": "58039571",
-      "title": "Fidelity Macro Chief Discusses Next Bitcoin Bull Market as Cycle Model Projects New Highs",
+      "title": "Fidelity宏观主管：比特币60美元或是本轮底部，牛市即将来袭",
       "url": "https://news.bitcoin.com/fidelity-macro-chief-discusses-next-bitcoin-bull-market-as-cycle-model-projects-new-highs/",
       "source": "Bitcoin.com",
-      "published_on": "2026-02-15 10:10",
-      "body": "Fidelity's director of global macro says bitcoin's drop to $60,000 likely marked the floor of its current cycle.",
-      "imageurl": "https://resources.cryptocompare.com/news/14/58039571.jpeg",
-      "categories": "BTC|MARKET|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 10:10"
     },
     {
       "id": "58038422",
-      "title": "Robert Kiyosaki Will Choose Bitcoin Over Gold if Forced to Pick One Asset",
+      "title": "Robert Kiyosaki：如果只能选一个资产，我会选比特币而非黄金",
       "url": "https://news.bitcoin.com/robert-kiyosaki-will-choose-bitcoin-over-gold-if-forced-to-pick-one-asset/",
       "source": "Bitcoin.com",
-      "published_on": "2026-02-15 09:44",
-      "body": "Robert Kiyosaki says he would choose bitcoin over gold if forced to choose a single asset.",
-      "imageurl": "https://resources.cryptocompare.com/news/14/58038422.jpeg",
-      "categories": "BTC|GOLD|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 09:44"
     },
     {
       "id": "58037321",
-      "title": "Judge Sentences PGI Founder to 20 Years for $201 Million Bitcoin Ponzi Scheme",
+      "title": "PGI创始人因2.01亿美元比特币庞氏骗局被判20年",
       "url": "https://news.bitcoin.com/judge-sentences-pgi-founder-to-20-years-for-201-million-bitcoin-ponzi-scheme/",
       "source": "Bitcoin.com",
-      "published_on": "2026-02-15 08:30",
-      "body": "The CEO of Praetorian Group International has been sentenced to 20 years in prison.",
-      "imageurl": "https://resources.cryptocompare.com/news/14/58037321.jpeg",
-      "categories": "BTC|BUSINESS|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 08:30"
     },
     {
       "id": "58036988",
-      "title": "Everyone's job is safety: Elon Musk fires back at xAI exodus concerns",
+      "title": "xAI安全团队集体离职，马斯克回应：每个人都要负责安全",
       "url": "https://www.cryptopolitan.com/musk-fires-back-xai-exodus-concerns/",
       "source": "Cryptopolitan",
-      "published_on": "2026-02-15 08:09",
-      "body": "Elon Musk is being criticized for ignoring safety measures after former employees reported that he dismantled the internal safety department at his xAI startup.",
-      "imageurl": "https://resources.cryptocompare.com/news/43/cryptopolitan.png",
-      "categories": "BUSINESS|REGULATION|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 08:09"
     },
     {
       "id": "58036288",
-      "title": "Tether Buys Stake in Gold.com to Expand Tokenized Gold Access",
+      "title": "Tether投资1.5亿美元入股Gold.com，拓展代币化黄金业务",
       "url": "https://en.coin-turk.com/tether-buys-stake-in-gold-com-to-expand-tokenized-gold-access/",
       "source": "CoinTurk",
-      "published_on": "2026-02-15 07:25",
-      "body": "Tether's $150 million investment in Gold.com aims to expand tokenized gold access for crypto users.",
-      "imageurl": "https://resources.cryptocompare.com/news/79/58036288.jpeg",
-      "categories": "USDT|GOLD|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 07:25"
     }
   ]
 }
