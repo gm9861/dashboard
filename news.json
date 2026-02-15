@@ -1,56 +1,106 @@
 {
-  "updated": "2026-02-08 18:49:48",
-  "count": 5,
+  "updated": "2026-02-15 12:25:00",
+  "count": 10,
   "news": [
     {
-      "id": "57838295",
-      "title": "Two High Schoolers Charged in Arizona Home Invasion Targeting $66M in Crypto",
-      "url": "https://cryptonews.com/news/two-high-schoolers-charged-in-arizona-home-invasion-targeting-66m-in-crypto/",
-      "source": "cryptonews",
-      "published_on": "2026-02-08 18:42",
-      "body": "Two teenagers from California are facing serious felony charges after authorities say they traveled hundreds of miles to carry out a violent home invasion in Scottsdale, Arizona, in a bid to obtain cryptocurrency believed to be worth $66 million. Key Takeaways: Two California teens allegedly traveled over 600 miles to carry out a violent home invasion targeting $66 million in cryptocurrency. Police arrested the suspects shortly after they fled the scene and recovered restraints and a 3D-printed ",
-      "imageurl": "https://resources.cryptocompare.com/news/52/57838295.jpeg",
-      "categories": "CRYPTOCURRENCY|SECURITY INCIDENTS"
+      "id": "58042903",
+      "title": "Chasing the Next Hidden Gem? Pepe and Buttcoin Set the Stage, but APEMARS Steals the Spotlight as the Top Meme Coin Presale 2026 After Raising $200K+",
+      "url": "https://timestabloid.com/chasing-the-next-hidden-gem-pepe-and-buttcoin-set-the-stage/",
+      "source": "TimesTabloid",
+      "published_on": "2026-02-15 12:15",
+      "body": "The crypto market has a memory problem. Every cycle, traders swear they will spot the next hidden gem early.",
+      "imageurl": "https://resources.cryptocompare.com/news/67/default.png",
+      "categories": "MARKET|TRADING|CRYPTOCURRENCY"
     },
     {
-      "id": "57838104",
-      "title": "South Korea’s Bithumb Exchange Accidentally Sends $44 Billion in Bitcoin to Users",
-      "url": "https://news.bitcoin.com/south-koreas-bithumb-exchange-accidentally-sends-44-billion-in-bitcoin-to-users/",
+      "id": "58042755",
+      "title": "Bitcoin Holds Firm Above $70,000 as Meme Coins Rally into the Weekend",
+      "url": "https://en.coin-turk.com/bitcoin-holds-firm-above-70000-as-meme-coins-rally-into-the-weekend/",
+      "source": "CoinTurk",
+      "published_on": "2026-02-15 12:03",
+      "body": "Bitcoin steadied above $70,000 as pivotal legal and macroeconomic events loom next week.",
+      "imageurl": "https://resources.cryptocompare.com/news/79/58042755.jpeg",
+      "categories": "BTC|TRADING|CRYPTOCURRENCY"
+    },
+    {
+      "id": "58041987",
+      "title": "Binance Expands RLUSD Across XRP Network, Unlocking New Liquidity Channels for Traders",
+      "url": "https://news.bitcoin.com/binance-expands-rlusd-across-xrp-network-unlocking-new-liquidity-channels-for-traders/",
       "source": "Bitcoin.com",
-      "published_on": "2026-02-08 18:30",
-      "body": "South Korean cryptocurrency exchange Bithumb mistakenly distributed approximately 620,000 bitcoins, worth around $44 billion, to 695 customers during a promotional event. The company quickly acted to restrict trading and withdrawals, claiming to have recovered 99.7% of the erroneously distributed cryptocurrency within 35 minutes of the incident. The exchange emphasized that the mistake was not caused",
-      "imageurl": "https://resources.cryptocompare.com/news/14/57838104.jpeg",
-      "categories": "ASIA|BTC|EXCHANGE|TRADING|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 11:43",
+      "body": "Binance has fully integrated Ripple USD (RLUSD) on the XRP Ledger.",
+      "imageurl": "https://resources.cryptocompare.com/news/14/58041987.jpeg",
+      "categories": "EXCHANGE|XRP|CRYPTOCURRENCY"
     },
     {
-      "id": "57838229",
-      "title": "The Last Window to Buy This Cheap Crypto at 50% Discount, Investors Rush in",
-      "url": "https://www.cryptopolitan.com/the-last-window-to-buy-this-cheap-crypto-at-50-discount-investors-rush-in/",
+      "id": "58040865",
+      "title": "XRP Surges as Ripple CEO Takes Role Influencing Crypto Regulation, Bulls Eye Breakout Signal",
+      "url": "https://news.bitcoin.com/xrp-surges-as-ripple-ceo-takes-role-influencing-crypto-regulation-bulls-eye-breakout-signal/",
+      "source": "Bitcoin.com",
+      "published_on": "2026-02-15 11:08",
+      "body": "XRP climbs sharply after Ripple CEO Brad Garlinghouse joins a key U.S. regulatory advisory committee.",
+      "imageurl": "https://resources.cryptocompare.com/news/14/58040865.jpeg",
+      "categories": "MARKET|REGULATION|XRP|CRYPTOCURRENCY"
+    },
+    {
+      "id": "58040778",
+      "title": "Shiba Inu Completes Golden Cross on Hourly Chart, Rises 6%",
+      "url": "https://u.today/shiba-inu-completes-golden-cross-on-hourly-chart-rises-6/",
+      "source": "U.Today",
+      "published_on": "2026-02-15 11:03",
+      "body": "Shiba Inu price rose 6%, with the market seeing its strongest weekend price action in over 20 weeks.",
+      "imageurl": "https://resources.cryptocompare.com/news/64/58040778.jpeg",
+      "categories": "MARKET|SHIB|TRADING|CRYPTOCURRENCY"
+    },
+    {
+      "id": "58039571",
+      "title": "Fidelity Macro Chief Discusses Next Bitcoin Bull Market as Cycle Model Projects New Highs",
+      "url": "https://news.bitcoin.com/fidelity-macro-chief-discusses-next-bitcoin-bull-market-as-cycle-model-projects-new-highs/",
+      "source": "Bitcoin.com",
+      "published_on": "2026-02-15 10:10",
+      "body": "Fidelity's director of global macro says bitcoin's drop to $60,000 likely marked the floor of its current cycle.",
+      "imageurl": "https://resources.cryptocompare.com/news/14/58039571.jpeg",
+      "categories": "BTC|MARKET|CRYPTOCURRENCY"
+    },
+    {
+      "id": "58038422",
+      "title": "Robert Kiyosaki Will Choose Bitcoin Over Gold if Forced to Pick One Asset",
+      "url": "https://news.bitcoin.com/robert-kiyosaki-will-choose-bitcoin-over-gold-if-forced-to-pick-one-asset/",
+      "source": "Bitcoin.com",
+      "published_on": "2026-02-15 09:44",
+      "body": "Robert Kiyosaki says he would choose bitcoin over gold if forced to choose a single asset.",
+      "imageurl": "https://resources.cryptocompare.com/news/14/58038422.jpeg",
+      "categories": "BTC|GOLD|CRYPTOCURRENCY"
+    },
+    {
+      "id": "58037321",
+      "title": "Judge Sentences PGI Founder to 20 Years for $201 Million Bitcoin Ponzi Scheme",
+      "url": "https://news.bitcoin.com/judge-sentences-pgi-founder-to-20-years-for-201-million-bitcoin-ponzi-scheme/",
+      "source": "Bitcoin.com",
+      "published_on": "2026-02-15 08:30",
+      "body": "The CEO of Praetorian Group International has been sentenced to 20 years in prison.",
+      "imageurl": "https://resources.cryptocompare.com/news/14/58037321.jpeg",
+      "categories": "BTC|BUSINESS|CRYPTOCURRENCY"
+    },
+    {
+      "id": "58036988",
+      "title": "Everyone's job is safety: Elon Musk fires back at xAI exodus concerns",
+      "url": "https://www.cryptopolitan.com/musk-fires-back-xai-exodus-concerns/",
       "source": "Cryptopolitan",
-      "published_on": "2026-02-08 18:30",
-      "body": "As expensive top cryptos show signs of saturation, a new altcoin wave of innovation is starting to capture the attention of experienced market participants. One emerging opportunity is moving into a late stage of its current cycle, creating a growing sense of urgency among those who closely follow new technology. This shift is not just about speculation. It reflects the move from ideas to working products. As the project prepares for its next big crypto milestone, the chance to engage at current",
-      "imageurl": "https://resources.cryptocompare.com/news/43/57838229.jpeg",
-      "categories": "BLOCKCHAIN|BUSINESS|MARKET|TRADING|CRYPTOCURRENCY"
+      "published_on": "2026-02-15 08:09",
+      "body": "Elon Musk is being criticized for ignoring safety measures after former employees reported that he dismantled the internal safety department at his xAI startup.",
+      "imageurl": "https://resources.cryptocompare.com/news/43/cryptopolitan.png",
+      "categories": "BUSINESS|REGULATION|CRYPTOCURRENCY"
     },
     {
-      "id": "57838056",
-      "title": "Could religion emerge naturally from large-scale AI systems?",
-      "url": "https://www.cryptopolitan.com/religion-ai/",
-      "source": "Cryptopolitan",
-      "published_on": "2026-02-08 18:20",
-      "body": "Religion developing inside machines sounds like science fiction, but can AI actually develop beliefs? The question might have seemed absurd just a few years ago, but artificial intelligence has reached an unexpected turning point. Computer programs built to answer questions and analyze information have started to show signs of something bigger and stranger: they have started developing what appears to be religious beliefs. The latest example comes from a social network called Moltbook, designed ",
-      "imageurl": "https://resources.cryptocompare.com/news/43/57838056.jpeg",
-      "categories": "EXCHANGE|TECHNOLOGY"
-    },
-    {
-      "id": "57837647",
-      "title": "Bitcoin Network Faces Unprecedented Decline in Mining Difficulty",
-      "url": "https://en.coin-turk.com/bitcoin-network-faces-unprecedented-decline-in-mining-difficulty/",
-      "source": "CoinTurk News",
-      "published_on": "2026-02-08 18:08",
-      "body": "Bitcoin mining difficulty saw a substantial 11.16% reduction recently. Price and natural conditions led to a significant decrease in hash rate. Continue Reading: Bitcoin Network Faces Unprecedented Decline in Mining Difficulty The post Bitcoin Network Faces Unprecedented Decline in Mining Difficulty appeared first on COINTURK NEWS .",
-      "imageurl": "https://resources.cryptocompare.com/news/79/57837647.jpeg",
-      "categories": "BTC|MINING|TRADING|CRYPTOCURRENCY"
+      "id": "58036288",
+      "title": "Tether Buys Stake in Gold.com to Expand Tokenized Gold Access",
+      "url": "https://en.coin-turk.com/tether-buys-stake-in-gold-com-to-expand-tokenized-gold-access/",
+      "source": "CoinTurk",
+      "published_on": "2026-02-15 07:25",
+      "body": "Tether's $150 million investment in Gold.com aims to expand tokenized gold access for crypto users.",
+      "imageurl": "https://resources.cryptocompare.com/news/79/58036288.jpeg",
+      "categories": "USDT|GOLD|CRYPTOCURRENCY"
     }
   ]
 }

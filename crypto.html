@@ -251,9 +251,29 @@
             }
         }
         
+        async function fetchNews() {
+            try {
+                const res = await fetch('news.json');
+                const data = await res.json();
+                const container = document.getElementById('crypto-news');
+                if (data.news && data.news.length > 0) {
+                    container.innerHTML = data.news.slice(0, 10).map(n => `
+                        <div class="metric" style="margin-bottom:10px;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;">
+                            <a href="${n.url}" target="_blank" style="color:#fff;text-decoration:none;font-size:0.9rem;">${n.title}</a>
+                            <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:5px;">${n.source} · ${n.published_on}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="loading">暂无新闻</div>';
+                }
+            } catch (e) {
+                document.getElementById('crypto-news').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
+        
         async function init() {
             renderPositions();
-            await Promise.all([fetchAHR999(), fetchFearGreed(), fetchHeatmap(), fetchChainData(), fetchTop10()]);
+            await Promise.all([fetchAHR999(), fetchFearGreed(), fetchHeatmap(), fetchChainData(), fetchTop10(), fetchNews()]);
         }
         
         init();
